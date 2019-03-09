@@ -38,7 +38,11 @@ class SelectImageActivity : AppCompatActivity() {
 
     fun confirmImage(){
         //다음 액티비티로 전환
-        Toast.makeText(this, "이미지 선택 완료", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "이미지 선택 완료", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, ResultImageActivity::class.java)
+        intent.data = fileUri
+        startActivity(intent)
+        finish()
     }
 
     fun selectImageInAlbum(){
