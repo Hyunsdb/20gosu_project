@@ -36,6 +36,8 @@ class SelectImageActivity : AppCompatActivity() {
     }
 
 
+
+
     fun confirmImage(){
         //다음 액티비티로 전환
         Toast.makeText(this, "이미지 선택 완료", Toast.LENGTH_SHORT).show()
