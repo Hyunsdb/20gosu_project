@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private var mainButtonGallery: Button? =null
@@ -16,12 +17,16 @@ class MainActivity : AppCompatActivity() {
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 0
     }
 
+    val CAMERA_REQUEST_CODE = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as Button
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
+
+        main_button_camera.setOnClickListener { openCameraApp() }
     }
   private var doubleBackToExitPressedOnce =false
     override fun onBackPressed() {
@@ -34,7 +39,12 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed(Runnable { doubleBackToExitPressedOnce=false },2000)
     }
 
-
+    fun openCameraApp(){
+        val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if(callCameraIntent.resolveActivity(packageManager)!=null) {
+            startActivityForResult(callCameraIntent,CAMERA_REQUEST_CODE )
+        }
+    }
 
     fun selectImageInAlbum(){
         val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
