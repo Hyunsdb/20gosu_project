@@ -1,10 +1,14 @@
-package com.example.a20gosu_proj
+package com.example.knowpic
 
 import android.app.Activity
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
@@ -22,13 +26,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupPermissions()
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as Button
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
 
         main_button_camera.setOnClickListener { openCameraApp() }
     }
-  private var doubleBackToExitPressedOnce =false
+    private fun setupPermissions() {
+        val permission = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
+        if(permission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
+    }
+
+    private fun makeRequest(){
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),CAMERA_REQUEST_CODE)
+    }
+
+    private var doubleBackToExitPressedOnce =false
     override fun onBackPressed() {
         if(doubleBackToExitPressedOnce){
             super.onBackPressed()
@@ -56,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK
-            && requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM){
+                && requestCode == REQUEST_SELECT_IMAGE_IN_ALBUM){
             var intent = Intent(this, SelectImageActivity::class.java)
             intent.data = data?.data
             startActivity(intent)
