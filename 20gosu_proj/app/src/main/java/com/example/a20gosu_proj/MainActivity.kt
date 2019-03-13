@@ -1,4 +1,4 @@
-package com.example.knowpic
+package com.example.a20gosu_proj
 
 import android.app.Activity
 import android.Manifest
