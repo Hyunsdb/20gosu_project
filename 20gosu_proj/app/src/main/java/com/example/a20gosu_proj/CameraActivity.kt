@@ -32,7 +32,7 @@ class CameraActivity : AppCompatActivity() {
         when(resultCode) {
             CAMERA_REQUEST_CODE -> {
                 if(resultCode == Activity.RESULT_OK && data != null) {
-                    //photoimageView.setImageBitmap(data.extras.get("data") as Bitmap)
+                    //resultImage_imageView.setImageBitmap(data.extras.get("data") as Bitmap)
                 }
             }
             else -> {
