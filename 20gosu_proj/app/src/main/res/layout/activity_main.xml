@@ -7,22 +7,27 @@
         tools:context=".MainActivity">
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
-        <Button
-                android:text="Gallery"
-                android:layout_centerInParent="true"
+        <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/main_button_gallery"/>
+                android:layout_centerInParent="true">
+            <Button
+                    android:text="Gallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25dp"
+                    android:id="@+id/main_button_gallery"
+                    android:layout_centerVertical="true"/>
+            <Button
+                    android:id="@+id/main_button_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:text="Camera"/>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/main_button_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:text="Camera" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
