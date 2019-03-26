@@ -1,10 +1,9 @@
 package com.example.a20gosu_proj
 
-import android.app.Activity
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -28,11 +27,10 @@ class MainActivity : AppCompatActivity() {
     private var mainButtonGallery: Button? =null
     companion object {
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 0
+        private val REQUEST_TAKE_PHOTO = 1
     }
-
     lateinit var photoPath: String
-    val REQUEST_TAKE_PHOTO = 1
-
+    var currentPhotoPath: String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,31 +70,48 @@ class MainActivity : AppCompatActivity() {
     }
     //카메라 실행
     fun openCameraApp(){
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val file: File = createImageFile()
 
-        if(intent.resolveActivity(packageManager)!=null) {
-
-            var photoFile: File? = null
-            try {
-                photoFile = createImageFile()
-            }catch (e: IOException){}
-            if(photoFile != null) {
-                var photoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider",photoFile)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent,REQUEST_TAKE_PHOTO)
-            }
-        }
+        val uri: Uri = FileProvider.getUriForFile(
+            this,
+            "com.example.android.fileprovider",
+            file
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri)
+        startActivityForResult(intent, REQUEST_TAKE_PHOTO)
     }
     //이미지 파일 생성 및 경로 지정
-    fun createImageFile(): File? {
+//    fun createImageFile(): File? {
+//        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+//        val fileName = "MyPicture" + timeStamp
+//        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+//        val image = File.createTempFile(fileName,".jpg",storageDir)
+//
+//        photoPath = image.absolutePath
+//
+//        return image
+//    }
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val fileName = "MyPicture" + timeStamp
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val image = File.createTempFile(fileName,".jpg",storageDir)
-
-        photoPath = image.absolutePath
-
-        return image
+        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+    private fun galleryAddPic() {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
     }
 
     fun selectImageInAlbum(){
@@ -118,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             Toast.makeText(this, "이미지 촬영 완료", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ResultImageActivity::class.java)
-            intent.data = data?.data
+            intent.data = Uri.fromFile(File(currentPhotoPath))
             startActivity(intent)
         }
     }
