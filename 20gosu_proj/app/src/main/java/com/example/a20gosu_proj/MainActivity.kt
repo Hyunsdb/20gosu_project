@@ -2,8 +2,10 @@ package com.example.a20gosu_proj
 
 import android.app.Activity
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -18,6 +20,8 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,20 +33,25 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoPath: String
     val REQUEST_TAKE_PHOTO = 1
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupPermissions()
+        setupCameraPermissions()
+        setupStoragePermissions()
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as Button
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
 
         main_button_camera.setOnClickListener { openCameraApp() }
     }
-    private fun setupPermissions() {
+    private fun setupCameraPermissions() {
         val cameraPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
-        val galleryPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if(cameraPermission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
+
+    }
+    private  fun setupStoragePermissions(){
+        val galleryPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if(galleryPermission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
     }
 
@@ -61,25 +70,27 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this,"한 번 더 뒤로가기 버튼을 클릭하면 종료됩니다.",Toast.LENGTH_SHORT).show()
         Handler().postDelayed(Runnable { doubleBackToExitPressedOnce=false },2000)
     }
-
+    //카메라 실행
     fun openCameraApp(){
-        val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if(callCameraIntent.resolveActivity(packageManager)!=null) {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+        if(intent.resolveActivity(packageManager)!=null) {
 
             var photoFile: File? = null
             try {
                 photoFile = createImageFile()
             }catch (e: IOException){}
             if(photoFile != null) {
-                val photoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider",photoFile)
-                callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(callCameraIntent,REQUEST_TAKE_PHOTO )
+                var photoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider",photoFile)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                startActivityForResult(intent,REQUEST_TAKE_PHOTO)
             }
         }
     }
-
-    fun createImageFile(): File {
-        val fileName = "MyPicture"
+    //이미지 파일 생성 및 경로 지정
+    fun createImageFile(): File? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val fileName = "MyPicture" + timeStamp
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(fileName,".jpg",storageDir)
 
@@ -103,8 +114,12 @@ class MainActivity : AppCompatActivity() {
             intent.data = data?.data
             startActivity(intent)
         }
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
-
+        //바로 결과화면으로 가게 했습니다.
+        else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(this, "이미지 촬영 완료", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ResultImageActivity::class.java)
+            intent.data = data?.data
+            startActivity(intent)
         }
     }
 }
