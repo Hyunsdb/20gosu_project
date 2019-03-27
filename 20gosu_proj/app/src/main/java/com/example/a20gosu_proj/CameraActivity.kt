@@ -24,6 +24,7 @@ class CameraActivity : AppCompatActivity() {
 
     val REQUEST_TAKE_PHOTO = 1
     lateinit var photoPath: String
+    var currentPhotoPath: String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +70,18 @@ class CameraActivity : AppCompatActivity() {
         return image
     }
 
+    private fun addToGallery() {
+        val mediaScan = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val file = File(currentPhotoPath)
+        val uri = Uri.fromFile(file)
+        mediaScan.setData(uri)
+        this.sendBroadcast(mediaScan)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             photoimageView!!.setImageURI(data?.data)
+            //addToGallery()
         }
     }
 }

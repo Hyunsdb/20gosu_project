@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 0
         private val REQUEST_TAKE_PHOTO = 1
+        private val REQUEST_WRITE_EXTERNAL = 2
     }
     lateinit var photoPath: String
     var currentPhotoPath: String=""
@@ -36,26 +37,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupCameraPermissions()
-        setupStoragePermissions()
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as Button
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
 
-        main_button_camera.setOnClickListener { openCameraApp() }
+        main_button_camera.setOnClickListener {
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_EXTERNAL)
+            }else {
+                openCameraApp()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_WRITE_EXTERNAL) openCameraApp()
     }
     private fun setupCameraPermissions() {
         val cameraPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
         if(cameraPermission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
 
     }
-    private  fun setupStoragePermissions(){
-        val galleryPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if(galleryPermission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
-    }
 
     private fun makeRequest(){
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_TAKE_PHOTO)
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),REQUEST_TAKE_PHOTO)
     }
 
     private var doubleBackToExitPressedOnce =false
@@ -74,9 +79,9 @@ class MainActivity : AppCompatActivity() {
         val file: File = createImageFile()
 
         val uri: Uri = FileProvider.getUriForFile(
-            this,
-            "com.example.android.fileprovider",
-            file
+                this,
+                "com.example.android.fileprovider",
+                file
         )
         intent.putExtra(MediaStore.EXTRA_OUTPUT,uri)
         startActivityForResult(intent, REQUEST_TAKE_PHOTO)
@@ -96,11 +101,15 @@ class MainActivity : AppCompatActivity() {
     private fun createImageFile(): File {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/WaKnowPic")
+        if(!storageDir.exists()){
+            storageDir.mkdir()
+        }
+        //val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
@@ -112,6 +121,14 @@ class MainActivity : AppCompatActivity() {
             mediaScanIntent.data = Uri.fromFile(f)
             sendBroadcast(mediaScanIntent)
         }
+    }
+
+    private fun addToGallery() {
+        val mediaScan = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val file = File(currentPhotoPath)
+        val uri = Uri.fromFile(file)
+        mediaScan.setData(uri)
+        this.sendBroadcast(mediaScan)
     }
 
     fun selectImageInAlbum(){
@@ -131,10 +148,12 @@ class MainActivity : AppCompatActivity() {
         }
         //바로 결과화면으로 가게 했습니다.
         else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            //addToGallery()
             Toast.makeText(this, "이미지 촬영 완료", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ResultImageActivity::class.java)
             intent.data = Uri.fromFile(File(currentPhotoPath))
             startActivity(intent)
+            addToGallery()
         }
     }
 }
