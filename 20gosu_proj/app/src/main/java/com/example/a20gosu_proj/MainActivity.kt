@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "이미지 촬영 완료", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, ResultImageActivity::class.java)
             intent.data = Uri.fromFile(File(currentPhotoPath))
+            intent.putExtra("path", currentPhotoPath)
             startActivity(intent)
             addToGallery()
         }

@@ -1,27 +1,65 @@
 package com.example.a20gosu_proj
 
+import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.example.a20gosu_proj.BuildConfig.ApiKey
+import com.google.firebase.storage.FirebaseStorage
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import java.io.File
+import android.provider.MediaStore
+import android.support.v4.app.FragmentActivity
+import android.util.Log
+import com.google.firebase.FirebaseApp
+
 
 class ResultImageActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var fileUri: Uri? = null
+    lateinit var storage: FirebaseStorage
+    private var path:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_image)
+        FirebaseApp.initializeApp(this)
         fileUri = intent?.data
+        path = intent.getStringExtra("path")
+        storage = FirebaseStorage.getInstance("gs://wearethegreatgosu")
 
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
-        sendPost()
+//        sendPost()
+        uploadToCloud()
+    }
+
+    fun uploadToCloud(){
+        val storageRef = storage.reference
+
+        var file = Uri.fromFile(File(path))
+        val riversRef = storageRef.child("images/${file.lastPathSegment}")
+        val uploadTask = riversRef.putFile(file)
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+        }.addOnSuccessListener {
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+        }
+
+// Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+        }.addOnSuccessListener {
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+        }
+
     }
     fun sendPost(){
         val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
