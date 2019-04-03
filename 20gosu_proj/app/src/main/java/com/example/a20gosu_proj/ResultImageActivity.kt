@@ -3,6 +3,7 @@ package com.example.a20gosu_proj
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.nfc.Tag
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
@@ -47,7 +48,7 @@ class ResultImageActivity : AppCompatActivity() {
 
         var file = Uri.fromFile(File(path))
         val riversRef = storageRef.child("images/${file.lastPathSegment}")
-        val uploadTask = riversRef.putFile(file)
+        var uploadTask = riversRef.putFile(file)
 
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
@@ -55,6 +56,9 @@ class ResultImageActivity : AppCompatActivity() {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
         }
+
+        val ref = storageRef.child("images/${file.lastPathSegment}")
+        uploadTask = ref.putFile(file)
 
         val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
             if (!task.isSuccessful) {
@@ -66,13 +70,13 @@ class ResultImageActivity : AppCompatActivity() {
         }).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
+                Log.d("Tag: value is ", downloadUri.toString())
             } else {
                 // Handle failures
                 // ...
             }
         }
-
-// Register observers to listen for when the download is done or if it fails
+        // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
         }.addOnSuccessListener {
@@ -81,6 +85,8 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
     }
+
+
     fun sendPost(){
         val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
         val client = OkHttpClient()
