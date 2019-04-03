@@ -16,7 +16,10 @@ import java.io.File
 import android.provider.MediaStore
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.storage.UploadTask
 
 
 class ResultImageActivity : AppCompatActivity() {
@@ -31,7 +34,7 @@ class ResultImageActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         fileUri = intent?.data
         path = intent.getStringExtra("path")
-        storage = FirebaseStorage.getInstance("gs://wearethegreatgosu")
+        storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
 
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
@@ -45,11 +48,28 @@ class ResultImageActivity : AppCompatActivity() {
         var file = Uri.fromFile(File(path))
         val riversRef = storageRef.child("images/${file.lastPathSegment}")
         val uploadTask = riversRef.putFile(file)
+
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
         }.addOnSuccessListener {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
+        }
+
+        val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            return@Continuation riversRef.downloadUrl
+        }).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+            } else {
+                // Handle failures
+                // ...
+            }
         }
 
 // Register observers to listen for when the download is done or if it fails
