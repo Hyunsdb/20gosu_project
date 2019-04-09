@@ -5,12 +5,14 @@ import android.database.Cursor
 import android.net.Uri
 import android.nfc.Tag
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.example.a20gosu_proj.BuildConfig.ApiKey
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import android.provider.MediaStore
+import android.provider.Settings
 import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.widget.TextView
@@ -23,6 +25,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import okhttp3.*
+import kotlin.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -32,6 +35,7 @@ class ResultImageActivity : AppCompatActivity() {
     private var fileUri: Uri? = null
     lateinit var storage: FirebaseStorage
     private var path:String? = null
+    var downloadUriToString:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +45,12 @@ class ResultImageActivity : AppCompatActivity() {
         path = intent.getStringExtra("path")
         storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
 
+
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
-        sendPost()
         uploadToCloud()
+
+
     }
 
     fun uploadToCloud(){
@@ -74,20 +80,15 @@ class ResultImageActivity : AppCompatActivity() {
         }).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-                Log.d("Tag: value is ", downloadUri.toString())
+                downloadUriToString = downloadUri.toString()
+                sendPost()
+                //Log.d("Tag: value is ", downloadUriToString)
+
             } else {
                 // Handle failures
                 // ...
             }
         }
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-        }.addOnSuccessListener {
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-        }
-
     }
 
     class Post {
@@ -108,12 +109,12 @@ class ResultImageActivity : AppCompatActivity() {
         val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
         val client = OkHttpClient()
         val JSON = MediaType.get("application/json; charset=utf-8")
-        val body= RequestBody.create(JSON, "{\n" +
+        var  body= RequestBody.create(JSON, "{\n" +
                 "  \"requests\": [\n" +
                 "    {\n" +
                 "      \"image\": {\n" +
                 "        \"source\": {\n" +
-                "          \"imageUri\": \"gs://wearethegreatgosu/demo-image.jpg\"\n" +
+                "          \"imageUri\": \"${downloadUriToString}\"\n" +
                 "        }\n" +
                 "      },\n" +
                 "      \"features\": [\n" +
@@ -126,8 +127,8 @@ class ResultImageActivity : AppCompatActivity() {
                 "}")
 
 
-
         Thread {
+            //Thread.sleep(6000L)
             val request = Request.Builder()
                 .url(url)
                 .post(body)
