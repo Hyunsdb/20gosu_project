@@ -13,21 +13,29 @@ import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import android.provider.MediaStore
 import android.provider.Settings
+import android.support.annotation.NonNull
 import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.widget.TextView
 import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.UploadTask
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.android.synthetic.main.activity_result_image.*
 import okhttp3.*
 import kotlin.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.w3c.dom.Text
 
 
 class ResultImageActivity : AppCompatActivity() {
@@ -45,11 +53,9 @@ class ResultImageActivity : AppCompatActivity() {
         path = intent.getStringExtra("path")
         storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
 
-
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
         uploadToCloud()
-
 
     }
 
@@ -79,9 +85,11 @@ class ResultImageActivity : AppCompatActivity() {
             return@Continuation riversRef.downloadUrl
         }).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val downloadUri = task.result
-                downloadUriToString = downloadUri.toString()
-                sendPost()
+//                val downloadUri: Uri? = task.result
+//                downloadUriToString = downloadUri.toString()
+                Thread(){
+                    sendPost(task.result)
+                }.start()
                 //Log.d("Tag: value is ", downloadUriToString)
 
             } else {
@@ -105,7 +113,9 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
     }
-    fun sendPost(){
+    fun sendPost(downloadUrl: Uri?){
+        downloadUriToString = downloadUrl.toString()
+        println("다운로드 "+downloadUriToString)
         val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
         val client = OkHttpClient()
         val JSON = MediaType.get("application/json; charset=utf-8")
@@ -126,7 +136,7 @@ class ResultImageActivity : AppCompatActivity() {
                 "  ]\n" +
                 "}")
 
-
+        var response:Response? = null
         Thread {
             //Thread.sleep(6000L)
             val request = Request.Builder()
@@ -134,30 +144,38 @@ class ResultImageActivity : AppCompatActivity() {
                 .post(body)
                 .build()
 
-            val response = client.newCall(request).execute()
-            println(response.request())
-            //println(response.body()!!.string()) //response 결과 확인
-            var gson = Gson() //Gson object 생성
-
-            //json 에서 -> Gson object
-            val parser = JsonParser()
-            val rootObj = parser.parse(response.body()!!.string())
-            var wordparsing = gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(0).asJsonObject.get("name").asString)
-            //단어 파싱함. 한번에 접근하여 name만 가져옴.
-
-            var resultword = wordparsing.replace("\"","")//출력될 단어 정리
-
-            var word1 = findViewById<TextView>(R.id.resultImage_textView1)
-            word1.setText(resultword)
-            var word2 = findViewById<TextView>(R.id.resultImage_textView2)
-            word2.setText("")
-            var word3 = findViewById<TextView>(R.id.resultImage_textView3)
-            word3.setText("")
-            var word4 = findViewById<TextView>(R.id.resultImage_textView4)
-            word4.setText("")
-            var word5 = findViewById<TextView>(R.id.resultImage_textView5)
-            word5.setText("")
+            response = client.newCall(request).execute()
+//            println(response!!.request())
+//            println(response!!.body()!!.string()) //response 결과 확인
+            val res = response!!.body()!!.string()
+            this@ResultImageActivity.runOnUiThread(java.lang.Runnable {
+                println(res)
+                this.resultImage_textView1.setText(res)
+            })
         }.start()
+
+//        run{
+//            var gson = Gson() //Gson object 생성
+//
+//            //json 에서 -> Gson object
+//            val parser = JsonParser()
+//            val rootObj = parser.parse(response!!.body()!!.string())
+//            var wordparsing = gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(0).asJsonObject.get("name").asString)
+//            //단어 파싱함. 한번에 접근하여 name만 가져옴.
+//
+//            var resultword = wordparsing.replace("\"","")//출력될 단어 정리
+//
+//            var word1:TextView = findViewById<TextView>(R.id.resultImage_textView1)
+//            word1.setText(resultword)
+//            var word2:TextView = findViewById<TextView>(R.id.resultImage_textView2)
+//            word2.setText("")
+//            var word3:TextView = findViewById<TextView>(R.id.resultImage_textView3)
+//            word3.setText("")
+//            var word4:TextView = findViewById<TextView>(R.id.resultImage_textView4)
+//            word4.setText("")
+//            var word5:TextView = findViewById<TextView>(R.id.resultImage_textView5)
+//            word5.setText("")
+//        }
     }
 
 
