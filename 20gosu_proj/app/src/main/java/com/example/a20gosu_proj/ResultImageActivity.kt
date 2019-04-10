@@ -147,35 +147,53 @@ class ResultImageActivity : AppCompatActivity() {
             response = client.newCall(request).execute()
 //            println(response!!.request())
 //            println(response!!.body()!!.string()) //response 결과 확인
-            val res = response!!.body()!!.string()
+            //val res = response!!.body()!!.string()
             this@ResultImageActivity.runOnUiThread(java.lang.Runnable {
-                println(res)
-                this.resultImage_textView1.setText(res)
+                var gson = Gson() //Gson object 생성
+
+                //json 에서 -> Gson object
+                val parser = JsonParser()
+                val rootObj = parser.parse(response!!.body()!!.string())
+                println(rootObj)
+                var num=if((Integer.parseInt((gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()))))>5){
+                    4
+                }else{
+                    Integer.parseInt(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()))-1
+                }
+                var i=0
+                while(num>=0){
+                    var wordparsing=gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("name").asString)
+                    var resultword = wordparsing.replace("\"","")
+                    var word1:TextView = findViewById(R.id.resultImage_textView1)
+                    var word2:TextView = findViewById(R.id.resultImage_textView2)
+                    var word3:TextView = findViewById(R.id.resultImage_textView3)
+                    var word4:TextView = findViewById(R.id.resultImage_textView4)
+                    var word5:TextView = findViewById(R.id.resultImage_textView5)
+
+
+                    //println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
+                    //좌표파싱
+
+
+                    if(i==0){
+                        word1.setText(resultword)
+                    }else if(i==1){
+                        word2.setText(resultword)
+                    }else if(i==2){
+                        word3.setText(resultword)
+                    }else if(i==3){
+                        word4.setText(resultword)
+                    }else if(i==4){
+                        word5.setText(resultword)
+                    }
+                    i++;
+                    num--;
+                }
+
+
             })
         }.start()
 
-//        run{
-//            var gson = Gson() //Gson object 생성
-//
-//            //json 에서 -> Gson object
-//            val parser = JsonParser()
-//            val rootObj = parser.parse(response!!.body()!!.string())
-//            var wordparsing = gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(0).asJsonObject.get("name").asString)
-//            //단어 파싱함. 한번에 접근하여 name만 가져옴.
-//
-//            var resultword = wordparsing.replace("\"","")//출력될 단어 정리
-//
-//            var word1:TextView = findViewById<TextView>(R.id.resultImage_textView1)
-//            word1.setText(resultword)
-//            var word2:TextView = findViewById<TextView>(R.id.resultImage_textView2)
-//            word2.setText("")
-//            var word3:TextView = findViewById<TextView>(R.id.resultImage_textView3)
-//            word3.setText("")
-//            var word4:TextView = findViewById<TextView>(R.id.resultImage_textView4)
-//            word4.setText("")
-//            var word5:TextView = findViewById<TextView>(R.id.resultImage_textView5)
-//            word5.setText("")
-//        }
     }
 
 

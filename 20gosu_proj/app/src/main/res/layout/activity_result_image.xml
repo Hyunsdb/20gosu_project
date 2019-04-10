@@ -20,28 +20,23 @@
                     android:id="@+id/resultImage_imageView"
             />
             <TextView
-                    android:text="TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginLeft="20dp"  android:id="@+id/resultImage_textView1"/>
             <TextView
-                    android:text="TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp" android:id="@+id/resultImage_textView2"/>
             <TextView
-                    android:text="TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp" android:id="@+id/resultImage_textView3"/>
             <TextView
-                    android:text="TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp" android:id="@+id/resultImage_textView4"/>
             <TextView
-                    android:text="TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp" android:id="@+id/resultImage_textView5"/>
