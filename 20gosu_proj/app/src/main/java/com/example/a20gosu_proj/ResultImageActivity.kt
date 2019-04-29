@@ -171,20 +171,39 @@ class ResultImageActivity : AppCompatActivity() {
                     var word5:TextView = findViewById(R.id.resultImage_textView5)
 
 
-                    //println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
-                    //좌표파싱
+
 
 
                     if(i==0){
                         word1.setText(resultword)
                     }else if(i==1){
                         word2.setText(resultword)
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
+
                     }else if(i==2){
                         word3.setText(resultword)
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
+
                     }else if(i==3){
                         word4.setText(resultword)
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
+
                     }else if(i==4){
                         word5.setText(resultword)
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
+                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
+
                     }
                     i++;
                     num--;
