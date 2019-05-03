@@ -23,18 +23,26 @@
                   <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/file_paths"/>
-
         </provider>
 
-        <activity android:name=".MainActivity">
+        <activity
+                android:name=".MainActivity"
+                android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectImageActivity" />
-        <activity android:name=".ResultImageActivity"></activity>
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".SelectImageActivity"
+                  android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".ResultImageActivity"
+                  android:screenOrientation="landscape">
+        </activity>
+        <activity android:name=".CameraActivity"
+                  android:screenOrientation="landscape">
+        </activity>
 
     </application>
 
