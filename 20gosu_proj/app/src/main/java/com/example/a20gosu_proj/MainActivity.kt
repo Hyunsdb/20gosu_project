@@ -14,7 +14,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -24,7 +24,7 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    private var mainButtonGallery: Button? =null
+    private var mainButtonGallery: ImageButton? =null
     companion object {
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 0
         private val REQUEST_TAKE_PHOTO = 1
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupCameraPermissions()
 
-        mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as Button
+        mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as ImageButton
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
 
         main_button_camera.setOnClickListener {
