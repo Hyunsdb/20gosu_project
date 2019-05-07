@@ -5,6 +5,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/bkg1"
         tools:context="com.example.a20gosu_proj.ResultImageActivity" android:orientation="vertical">
 
     <ScrollView
