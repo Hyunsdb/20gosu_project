@@ -8,5 +8,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <!-- For Splash Screen -->
+    <style name="SplashTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 
 </resources>
