@@ -57,7 +57,7 @@ class ResultImageActivity : AppCompatActivity() {
     private var check3:Boolean?=true
     private var check4:Boolean?=true
     private var check5:Boolean?=true
-    private val m = null;
+    lateinit var mp:MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,15 +69,11 @@ class ResultImageActivity : AppCompatActivity() {
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
         uploadToCloud()
+        mp = MediaPlayer.create(this, R.raw.wordclicksound)
 
-        val progressionDialog = ProgressDialog(this)
-        progressionDialog.setMessage("단어를 불러오고 있어요~")
-        progressionDialog.setCancelable(false)
-        progressionDialog.show()
-
-        Handler().postDelayed({progressionDialog.dismiss()},3000)
 
         resultImage_textView1.setOnClickListener {
+            mp.start()
             if(check1==false){
                 resultImage_textView1.text=word1
                 check1=true
@@ -88,6 +84,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
         resultImage_textView2.setOnClickListener {
+            mp.start()
             if(check2==false){
                 resultImage_textView2.text=word2
                 check2=true
@@ -98,6 +95,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
         resultImage_textView3.setOnClickListener {
+            mp.start()
             if(check3==false){
                 resultImage_textView3.text=word3
                 check3=true
@@ -108,6 +106,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
         resultImage_textView4.setOnClickListener {
+            mp.start()
             if(check4==false){
                 resultImage_textView4.text=word4
                 check4=true
@@ -118,6 +117,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
         resultImage_textView5.setOnClickListener {
+            mp.start()
             if(check5==false){
                 resultImage_textView5.text=word5
                 check5=true
