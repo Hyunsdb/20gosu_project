@@ -18,21 +18,19 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true">
             <ImageButton
-                    android:src="@drawable/ic_gallery_150dp"
+                    android:src="@drawable/main_gallery"
                     android:background="@drawable/shape"
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:layout_marginRight="50dp"
                     android:id="@+id/main_button_gallery"
-                    android:padding="0dp"
                     android:layout_centerVertical="true"/>
             <ImageButton
                     android:id="@+id/main_button_camera"
-                    android:src="@drawable/ic_take_picture_120dp"
+                    android:src="@drawable/main_camera"
                     android:background="@drawable/shape"
                     android:layout_width="180dp"
                     android:layout_height="180dp"
-                    android:padding="0dp"
                     android:layout_marginLeft="50dp"/>
         </LinearLayout>
 
