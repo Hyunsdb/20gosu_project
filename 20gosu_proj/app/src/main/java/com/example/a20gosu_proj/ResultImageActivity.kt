@@ -1,5 +1,6 @@
 package com.example.a20gosu_proj
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.database.Cursor
 import android.media.MediaPlayer
@@ -68,6 +69,14 @@ class ResultImageActivity : AppCompatActivity() {
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
         uploadToCloud()
+
+        val progressionDialog = ProgressDialog(this)
+        progressionDialog.setMessage("단어를 불러오고 있어요~")
+        progressionDialog.setCancelable(false)
+        progressionDialog.show()
+
+        Handler().postDelayed({progressionDialog.dismiss()},3000)
+
         resultImage_textView1.setOnClickListener {
             if(check1==false){
                 resultImage_textView1.text=word1
