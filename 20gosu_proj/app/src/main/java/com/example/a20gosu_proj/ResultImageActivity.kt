@@ -2,6 +2,7 @@ package com.example.a20gosu_proj
 
 import android.content.Context
 import android.database.Cursor
+import android.media.MediaPlayer
 import android.net.Uri
 import android.nfc.Tag
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnFailureListener
@@ -44,6 +46,17 @@ class ResultImageActivity : AppCompatActivity() {
     lateinit var storage: FirebaseStorage
     private var path:String? = null
     var downloadUriToString:String? = null
+    private var word1:String?=null
+    private var word2:String?=null
+    private var word3:String?=null
+    private var word4:String?=null
+    private var word5:String?=null
+    private var check1:Boolean?=true
+    private var check2:Boolean?=true
+    private var check3:Boolean?=true
+    private var check4:Boolean?=true
+    private var check5:Boolean?=true
+    private val m = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +65,60 @@ class ResultImageActivity : AppCompatActivity() {
         fileUri = intent?.data
         path = intent.getStringExtra("path")
         storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
-
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
         uploadToCloud()
+        resultImage_textView1.setOnClickListener {
+            if(check1==false){
+                resultImage_textView1.text=word1
+                check1=true
+            }else{
+                resultImage_textView1.text="뜻"
+                check1=false
+            }
+        }
+
+        resultImage_textView2.setOnClickListener {
+            if(check2==false){
+                resultImage_textView2.text=word2
+                check2=true
+            }else{
+                resultImage_textView2.text="뜻"
+                check2=false
+            }
+        }
+
+        resultImage_textView3.setOnClickListener {
+            if(check3==false){
+                resultImage_textView3.text=word3
+                check3=true
+            }else{
+                resultImage_textView3.text="뜻"
+                check3=false
+            }
+        }
+
+        resultImage_textView4.setOnClickListener {
+            if(check4==false){
+                resultImage_textView4.text=word4
+                check4=true
+            }else{
+                resultImage_textView4.text="뜻"
+                check4=false
+            }
+        }
+
+        resultImage_textView5.setOnClickListener {
+            if(check5==false){
+                resultImage_textView5.text=word5
+                check5=true
+            }else{
+                resultImage_textView5.text="뜻"
+                check5=false
+            }
+        }
+
+
 
     }
 
@@ -87,7 +150,7 @@ class ResultImageActivity : AppCompatActivity() {
             if (task.isSuccessful) {
 //                val downloadUri: Uri? = task.result
 //                downloadUriToString = downloadUri.toString()
-                Thread(){
+                Thread {
                     sendPost(task.result)
                 }.start()
                 //Log.d("Tag: value is ", downloadUriToString)
@@ -98,56 +161,39 @@ class ResultImageActivity : AppCompatActivity() {
             }
         }
     }
-
-    class Post {
-        var mid: String? = null
-        var name: String? = null
-        var score: String? = null
-
-        constructor() : super()
-
-        constructor(Source: String, Target: String, Translatedtext: String) : super() {
-            this.mid = Source
-            this.name = Target
-            this.score = Translatedtext
-        }
-
-    }
-    fun sendPost(downloadUrl: Uri?){
+    fun sendPost(downloadUrl: Uri?) {
         downloadUriToString = downloadUrl.toString()
-        println("다운로드 "+downloadUriToString)
+        println("다운로드 " + downloadUriToString)
         val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
         val client = OkHttpClient()
         val JSON = MediaType.get("application/json; charset=utf-8")
-        var  body= RequestBody.create(JSON, "{\n" +
-                "  \"requests\": [\n" +
-                "    {\n" +
-                "      \"image\": {\n" +
-                "        \"source\": {\n" +
-                "          \"imageUri\": \"${downloadUriToString}\"\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"features\": [\n" +
-                "        {\n" +
-                "          \"type\": \"OBJECT_LOCALIZATION\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}")
+        var body = RequestBody.create(
+            JSON, "{\n" +
+                    "  \"requests\": [\n" +
+                    "    {\n" +
+                    "      \"image\": {\n" +
+                    "        \"source\": {\n" +
+                    "          \"imageUri\": \"${downloadUriToString}\"\n" +
+                    "        }\n" +
+                    "      },\n" +
+                    "      \"features\": [\n" +
+                    "        {\n" +
+                    "          \"type\": \"OBJECT_LOCALIZATION\"\n" +
+                    "        }\n" +
+                    "      ]\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}"
+        )
 
-        var response:Response? = null
+        var response: Response? = null
         Thread {
-            //Thread.sleep(6000L)
             val request = Request.Builder()
                 .url(url)
                 .post(body)
                 .build()
 
             response = client.newCall(request).execute()
-//            println(response!!.request())
-//            println(response!!.body()!!.string()) //response 결과 확인
-            //val res = response!!.body()!!.string()
             this@ResultImageActivity.runOnUiThread(java.lang.Runnable {
                 var gson = Gson() //Gson object 생성
 
@@ -155,65 +201,54 @@ class ResultImageActivity : AppCompatActivity() {
                 val parser = JsonParser()
                 val rootObj = parser.parse(response!!.body()!!.string())
                 println(rootObj)
-                var num=if((Integer.parseInt((gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()))))>5){
+                var num = if ((Integer.parseInt(
+                        (gson.toJson(
+                            rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()
+                        ))
+                    )) > 5
+                ) {
                     4
-                }else{
-                    Integer.parseInt(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()))-1
+                } else {
+                    Integer.parseInt(
+                        gson.toJson(
+                            rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get(
+                                "localizedObjectAnnotations"
+                            ).asJsonArray.size()
+                        )
+                    ) - 1
                 }
-                var i=0
-                while(num>=0){
-                    var wordparsing=gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("name").asString)
-                    var resultword = wordparsing.replace("\"","")
-                    var word1:TextView = findViewById(R.id.resultImage_textView1)
-                    var word2:TextView = findViewById(R.id.resultImage_textView2)
-                    var word3:TextView = findViewById(R.id.resultImage_textView3)
-                    var word4:TextView = findViewById(R.id.resultImage_textView4)
-                    var word5:TextView = findViewById(R.id.resultImage_textView5)
+                var i = 0
+                while (num >= 0) {
+                    var wordparsing = gson.toJson(
+                        rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(
+                            i
+                        ).asJsonObject.get("name").asString
+                    )
+                    var resultword = wordparsing.replace("\"", "")
 
 
-
-
-
-                    if(i==0){
-                        word1.setText(resultword)
-                    }else if(i==1){
-                        word2.setText(resultword)
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
-
-                    }else if(i==2){
-                        word3.setText(resultword)
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
-
-                    }else if(i==3){
-                        word4.setText(resultword)
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
-
-                    }else if(i==4){
-                        word5.setText(resultword)
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(0).asJsonObject.get("y")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("x")))
-                        println(gson.toJson(rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(i).asJsonObject.get("boundingPoly").asJsonObject.get("normalizedVertices").asJsonArray.get(1).asJsonObject.get("y")))
-
+                    if (i == 0) {
+                        word1=resultword
+                        resultImage_textView1!!.text = word1
+                    } else if (i == 1) {
+                        word2=resultword
+                        resultImage_textView2!!.text = word2
+                    } else if (i == 2) {
+                        word3=resultword
+                        resultImage_textView3!!.text = word3
+                    } else if (i == 3) {
+                        word4=resultword
+                        resultImage_textView4!!.text = word4
+                    } else if (i == 4) {
+                        word5=resultword
+                        resultImage_textView5!!.text = word5
                     }
-                    i++;
-                    num--;
+                    i++
+                    num--
                 }
-
-
             })
         }.start()
 
     }
-
 
 }
