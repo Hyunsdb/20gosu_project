@@ -5,7 +5,7 @@
         <item name="windowNoTitle">true</item>
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#F29494</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <!-- For Splash Screen -->

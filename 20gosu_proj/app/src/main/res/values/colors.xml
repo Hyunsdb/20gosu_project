@@ -8,4 +8,12 @@
     <color name="colorBackGround">#B79C9C</color>
     <color name="colorSplash">#f8bbd0</color>
     <color name="colorSplashLight">#ffcdd2</color>
+    <color name="color_a">#F291A3</color>
+    <color name="color_b">#6BBF90</color>
+    <color name="color_c">#80A690</color>
+    <color name="color_d">#F2C6AC</color>
+    <color name="color_e">#F29494</color>
+    <color name="color_a1">#79A637</color>
+
+
 </resources>

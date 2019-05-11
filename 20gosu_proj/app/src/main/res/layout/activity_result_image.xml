@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.example.a20gosu_proj.ResultImageActivity"
-        android:background="@drawable/bkg1">
+        android:background="@drawable/bkg">
 
 
     <ImageView
-            android:layout_width="380dp"
+            android:layout_width="330dp"
             android:layout_height="500dp"
-            android:layout_gravity="center"
             android:src="@mipmap/ic_launcher"
             android:id="@+id/resultImage_imageView"
             android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+    />
+
     <com.ssomai.android.scalablelayout.ScalableLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/main_textview"
-            app:scale_base_width="10"
-            app:scale_base_height="200"
-            app:scale_left="20"
-            app:scale_top="40"
-            app:scale_width="100"
-            app:scale_height="30"
-            app:scale_textsize="20">
+            app:scale_base_width="100"
+            app:scale_base_height="110"
+            android:layout_toRightOf="@+id/resultImage_imageView"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+
+    >
         <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+        >
+
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                           android:orientation="vertical"
                           android:layout_marginTop="30dp"
@@ -49,7 +50,7 @@
                             android:layout_marginRight="10dp"
                             android:gravity="center"
                             android:id="@+id/resultImage_textView1"
-                            android:background="@color/colorAccent"
+                            android:background="#F29494"
 
                     />
                     <Button
@@ -57,7 +58,8 @@
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
                             android:id="@+id/wordSound1"
-                            android:background="@color/colorAccent"
+                            android:background="@drawable/s2"
+                            android:backgroundTint="#F29494"
                     />
 
                 </LinearLayout>
@@ -73,13 +75,14 @@
                             android:layout_marginBottom="10dp"
                             android:gravity="center"
                             android:id="@+id/resultImage_textView2"
-                            android:background="@color/colorAccent"/>
+                            android:background="#F291A3"/>
                     <Button
-                            android:layout_width="50dp"
+                            android:layout_width="49dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
                             android:id="@+id/wordSound2"
-                            android:background="@color/colorAccent"
+                            android:backgroundTint="#F291A3"
+                            android:background="@drawable/s2"
                     />
                 </LinearLayout>
                 <LinearLayout
@@ -92,14 +95,15 @@
                             android:layout_marginBottom="10dp"
                             android:layout_marginRight="10dp"
                             android:gravity="center"
-                            android:background="@color/colorAccent"
+                            android:background="#6BBF90"
                             android:id="@+id/resultImage_textView3"/>
                     <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
                             android:id="@+id/wordSound3"
-                            android:background="@color/colorAccent"
+                            android:backgroundTint="#6BBF90"
+                            android:background="@drawable/s2"
                     />
                 </LinearLayout>
                 <LinearLayout
@@ -113,13 +117,14 @@
                             android:layout_marginRight="10dp"
                             android:gravity="center"
                             android:id="@+id/resultImage_textView4"
-                            android:background="@color/colorAccent"/>
+                            android:background="#80A690"/>
                     <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
                             android:id="@+id/wordSound4"
-                            android:background="@color/colorAccent"
+                            android:background="@drawable/s2"
+                            android:backgroundTint="#80A690"
                     />
                 </LinearLayout>
                 <LinearLayout
@@ -132,17 +137,18 @@
                             android:gravity="center"
                             android:layout_marginRight="10dp"
                             android:id="@+id/resultImage_textView5"
-                            android:background="@color/colorAccent"
+                            android:background="#F2C6AC"
                             android:layout_marginBottom="20dp"/>
                     <Button
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
                             android:id="@+id/wordSound5"
-                            android:background="@color/colorAccent"
+                            android:background="@drawable/s2"
+                            android:backgroundTint="#F2C6AC"
                     />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </com.ssomai.android.scalablelayout.ScalableLayout>
-</LinearLayout>
+</RelativeLayout>
