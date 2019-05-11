@@ -17,63 +17,76 @@
             android:id="@+id/resultImage_imageView"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"/>
-    <ScrollView
+    <com.ssomai.android.scalablelayout.ScalableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                      android:orientation="vertical"
-                      android:layout_marginTop="30dp"
-                      android:layout_marginLeft="10dp"
-                      android:layout_marginRight="10dp">
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-            >
-                <Button
-                        android:layout_width="250dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="center"
-                        android:id="@+id/resultImage_textView1"
-                        android:background="@color/colorAccent"
-                />
-                <Button
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/wordSound1"
-                        android:background="@color/colorAccent"
-                />
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/main_textview"
+            app:scale_base_width="10"
+            app:scale_base_height="200"
+            app:scale_left="20"
+            app:scale_top="40"
+            app:scale_width="100"
+            app:scale_height="30"
+            app:scale_textsize="20">
+        <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:layout_marginTop="30dp"
+                          android:layout_marginLeft="10dp"
+                          android:layout_marginRight="10dp">
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                >
+                    <Button
+                            android:layout_width="250dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginRight="10dp"
+                            android:gravity="center"
+                            android:id="@+id/resultImage_textView1"
+                            android:background="@color/colorAccent"
 
-            </LinearLayout>
+                    />
+                    <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:id="@+id/wordSound1"
+                            android:background="@color/colorAccent"
+                    />
 
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                <Button
-                        android:layout_width="250dp"
-                        android:layout_height="50dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:gravity="center"
-                        android:id="@+id/resultImage_textView2"
-                        android:background="@color/colorAccent"/>
-                <Button
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/wordSound2"
-                        android:background="@color/colorAccent"
-                />
-            </LinearLayout>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                <Button
+                </LinearLayout>
+
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <Button
+                            android:layout_width="250dp"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center"
+                            android:id="@+id/resultImage_textView2"
+                            android:background="@color/colorAccent"/>
+                    <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:id="@+id/wordSound2"
+                            android:background="@color/colorAccent"
+                    />
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <Button
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
@@ -81,19 +94,19 @@
                             android:gravity="center"
                             android:background="@color/colorAccent"
                             android:id="@+id/resultImage_textView3"/>
-                <Button
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/wordSound3"
-                        android:background="@color/colorAccent"
-                />
-            </LinearLayout>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                <Button
+                    <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:id="@+id/wordSound3"
+                            android:background="@color/colorAccent"
+                    />
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <Button
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:layout_marginBottom="10dp"
@@ -101,19 +114,19 @@
                             android:gravity="center"
                             android:id="@+id/resultImage_textView4"
                             android:background="@color/colorAccent"/>
-                <Button
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/wordSound4"
-                        android:background="@color/colorAccent"
-                />
-            </LinearLayout>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                <Button
+                    <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:id="@+id/wordSound4"
+                            android:background="@color/colorAccent"
+                    />
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <Button
                             android:layout_width="250dp"
                             android:layout_height="50dp"
                             android:gravity="center"
@@ -121,15 +134,15 @@
                             android:id="@+id/resultImage_textView5"
                             android:background="@color/colorAccent"
                             android:layout_marginBottom="20dp"/>
-                <Button
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/wordSound5"
-                        android:background="@color/colorAccent"
-                />
+                    <Button
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="10dp"
+                            android:id="@+id/wordSound5"
+                            android:background="@color/colorAccent"
+                    />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-
+        </ScrollView>
+    </com.ssomai.android.scalablelayout.ScalableLayout>
 </LinearLayout>

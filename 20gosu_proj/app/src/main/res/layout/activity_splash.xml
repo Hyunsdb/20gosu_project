@@ -9,12 +9,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorSplash">
-
-        <LinearLayout
-                android:orientation="horizontal"
+        <com.ssomai.android.scalablelayout.ScalableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                app:scale_base_width="100"
+                app:scale_base_height="100"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="100dp"
+                android:layout_marginBottom="100dp"
+        >
 
             <ImageView
                     android:layout_width="match_parent"
@@ -23,9 +26,6 @@
                     android:scaleType="centerInside"
                     android:id="@+id/splash_imageView"
             />
-
-
-        </LinearLayout>
-
+        </com.ssomai.android.scalablelayout.ScalableLayout>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
