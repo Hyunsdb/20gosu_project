@@ -21,6 +21,11 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.R.id.edit
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +42,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupCameraPermissions()
+
+        val t = Thread(Runnable {
+            //  Initialize SharedPreferences
+            val getPrefs = PreferenceManager
+                .getDefaultSharedPreferences(baseContext)
+
+            //  Create a new boolean and preference and set it to true
+            val isFirstStart = getPrefs.getBoolean("firstStart", true)
+
+            //  If the activity has never started before...
+            if (isFirstStart) {
+
+                //  Launch app intro
+                val i = Intent(this@MainActivity, IntroActivity::class.java)
+
+                runOnUiThread { startActivity(i) }
+
+                //  Make a new preferences editor
+                val e = getPrefs.edit()
+
+                //  Edit preference to make it false because we don't want this to run again
+                e.putBoolean("firstStart", false)
+
+                //  Apply changes
+                e.apply()
+            }
+        })
+
+        // Start the thread
+        t.start()
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as ImageButton
         mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
