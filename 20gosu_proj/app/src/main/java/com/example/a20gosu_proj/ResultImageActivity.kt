@@ -1,44 +1,31 @@
 package com.example.a20gosu_proj
 
-import android.app.ProgressDialog
-import android.content.Context
-import android.database.Cursor
+import android.content.Intent
+import android.graphics.Bitmap
 import android.media.MediaPlayer
 import android.net.Uri
-import android.nfc.Tag
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.example.a20gosu_proj.BuildConfig.ApiKey
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import android.provider.MediaStore
-import android.provider.Settings
-import android.support.annotation.NonNull
-import android.support.v4.app.FragmentActivity
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
 import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
 import com.google.firebase.storage.UploadTask
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_result_image.*
 import okhttp3.*
-import kotlin.coroutines.*
-import org.json.JSONArray
-import org.json.JSONObject
-import org.w3c.dom.Text
+import java.util.*
 
 
 class ResultImageActivity : AppCompatActivity() {
@@ -58,6 +45,12 @@ class ResultImageActivity : AppCompatActivity() {
     private var check4:Boolean?=true
     private var check5:Boolean?=true
     lateinit var mp:MediaPlayer
+    var bitmap:Bitmap? = null
+    var wordpilec:String=""
+    var wordArray= emptyArray<String>()
+    val builder=StringBuilder()
+    private lateinit var labelsList : ArrayList<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +61,11 @@ class ResultImageActivity : AppCompatActivity() {
         storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
-        uploadToCloud()
+        //uploadToCloud()
+        bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
+        runDetector(bitmap!!)
+
+
         mp = MediaPlayer.create(this, R.raw.wordclicksound)
 
 
@@ -128,7 +125,48 @@ class ResultImageActivity : AppCompatActivity() {
         }
 
 
+    }
 
+
+     fun runDetector (bitmap : Bitmap?){
+         labelsList = ArrayList<String>()
+        val image = FirebaseVisionImage.fromBitmap(bitmap!!)
+        val options = FirebaseVisionCloudImageLabelerOptions.Builder()
+            .setConfidenceThreshold(0.7f)
+            .build()
+        val labeler = FirebaseVision.getInstance().getCloudImageLabeler(options)
+        labeler.processImage(image)
+            .addOnSuccessListener (object : OnSuccessListener<List<FirebaseVisionImageLabel>>{
+                override fun onSuccess(labels: List<FirebaseVisionImageLabel>?) {
+                    if (labels != null) {
+                        for (label in labels){
+                            builder.append(label.text).append(",")
+                            labelsList.add(label.text)
+
+
+                        }
+                        wordpilec = builder.toString()
+                        stringtoArray(wordpilec)
+
+                    }
+                }
+            })
+            .addOnFailureListener{e-> Log.d("Edmmer",e.message)}
+
+    }
+
+    private fun stringtoArray(wordpilec :String) {
+        var words: Array<String> = wordpilec.split(",").toTypedArray()
+        wordArray = words.copyOf()
+        resultImage_textView1.text = wordArray[0]
+        resultImage_textView2.text = wordArray[1]
+        resultImage_textView3.text = wordArray[2]
+        resultImage_textView4.text = wordArray[3]
+        resultImage_textView5.text = wordArray[4]
+    }
+    fun arrayReading(array: Array<String>){
+        for (i in array.indices)
+            println(array[i])
     }
 
     fun uploadToCloud(){
