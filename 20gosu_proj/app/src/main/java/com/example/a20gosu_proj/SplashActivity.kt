@@ -36,7 +36,7 @@ class SplashActivity : AppCompatActivity() {
         valueAnimator.duration = ANIMATION_DURATION
 
         // Set animator listener.
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, IntroActivity::class.java)
         valueAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationRepeat(p0: Animator?) {}
 

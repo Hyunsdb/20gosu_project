@@ -36,6 +36,7 @@ class IntroActivity : AppIntro() {
         //Toast.makeText(this, "넘김!", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {
@@ -44,6 +45,7 @@ class IntroActivity : AppIntro() {
         //Toast.makeText(this, "설명 끝!!", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {
