@@ -11,7 +11,11 @@ import com.example.a20gosu_proj.BuildConfig.ApiKey
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import android.provider.MediaStore
+import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -49,7 +53,9 @@ class ResultImageActivity : AppCompatActivity() {
     var wordpilec:String=""
     var wordArray= emptyArray<String>()
     val builder=StringBuilder()
-    private lateinit var labelsList : ArrayList<String>
+    lateinit var mTTS:TextToSpeech
+
+    var words2 = arrayOfNulls<String>(20)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +70,11 @@ class ResultImageActivity : AppCompatActivity() {
         //uploadToCloud()
         bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
         runDetector(bitmap!!)
+        mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
+            if(status!= TextToSpeech.ERROR){
+                mTTS.language= Locale.US
+            }
+        })
 
 
         mp = MediaPlayer.create(this, R.raw.wordclicksound)
@@ -72,7 +83,7 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView1.setOnClickListener {
             mp.start()
             if(check1==false){
-                resultImage_textView1.text=word1
+                resultImage_textView1.text=words2[0]
                 check1=true
             }else{
                 resultImage_textView1.text="뜻"
@@ -83,7 +94,8 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView2.setOnClickListener {
             mp.start()
             if(check2==false){
-                resultImage_textView2.text=word2
+                resultImage_textView2.text=words2[1]
+
                 check2=true
             }else{
                 resultImage_textView2.text="뜻"
@@ -94,7 +106,7 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView3.setOnClickListener {
             mp.start()
             if(check3==false){
-                resultImage_textView3.text=word3
+                resultImage_textView3.text=words2[2]
                 check3=true
             }else{
                 resultImage_textView3.text="뜻"
@@ -105,7 +117,7 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView4.setOnClickListener {
             mp.start()
             if(check4==false){
-                resultImage_textView4.text=word4
+                resultImage_textView4.text=words2[3]
                 check4=true
             }else{
                 resultImage_textView4.text="뜻"
@@ -116,20 +128,31 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView5.setOnClickListener {
             mp.start()
             if(check5==false){
-                resultImage_textView5.text=word5
+                resultImage_textView5.text=words2[4]
                 check5=true
             }else{
                 resultImage_textView5.text="뜻"
                 check5=false
             }
         }
-
+        wordSound1.setOnClickListener{speechWord(0)}
+        wordSound2.setOnClickListener{speechWord(1)}
+        wordSound3.setOnClickListener{speechWord(2)}
+        wordSound4.setOnClickListener{speechWord(3)}
+        wordSound5.setOnClickListener{speechWord(4)}
 
     }
-
+    fun speechWord(i : Int){
+        if (words2[i] == "") {
+            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, words2[i], Toast.LENGTH_SHORT).show()
+            mTTS.speak(words2[i], TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
 
      fun runDetector (bitmap : Bitmap?){
-         labelsList = ArrayList<String>()
+
         val image = FirebaseVisionImage.fromBitmap(bitmap!!)
         val options = FirebaseVisionCloudImageLabelerOptions.Builder()
             .setConfidenceThreshold(0.7f)
@@ -139,9 +162,15 @@ class ResultImageActivity : AppCompatActivity() {
             .addOnSuccessListener (object : OnSuccessListener<List<FirebaseVisionImageLabel>>{
                 override fun onSuccess(labels: List<FirebaseVisionImageLabel>?) {
                     if (labels != null) {
+
+                        var j=0
+
                         for (label in labels){
                             builder.append(label.text).append(",")
-                            labelsList.add(label.text)
+
+                        words2[j]=label.text
+                           j++
+
 
 
                         }
@@ -208,6 +237,8 @@ class ResultImageActivity : AppCompatActivity() {
             }
         }
     }
+
+
     fun sendPost(downloadUrl: Uri?) {
         downloadUriToString = downloadUrl.toString()
         println("다운로드 " + downloadUriToString)
