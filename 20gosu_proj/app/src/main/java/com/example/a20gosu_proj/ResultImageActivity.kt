@@ -1,7 +1,7 @@
 package com.example.a20gosu_proj
 
-import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -13,8 +13,6 @@ import java.io.File
 import android.provider.MediaStore
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnSuccessListener
@@ -29,6 +27,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_result_image.*
 import okhttp3.*
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -55,7 +54,7 @@ class ResultImageActivity : AppCompatActivity() {
     val builder=StringBuilder()
     lateinit var mTTS:TextToSpeech
 
-    var words2 = arrayOfNulls<String>(20)
+    var words2 = arrayOfNulls<String>(100)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,11 +69,13 @@ class ResultImageActivity : AppCompatActivity() {
         //uploadToCloud()
         bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
         runDetector(bitmap!!)
+
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
             if(status!= TextToSpeech.ERROR){
                 mTTS.language= Locale.US
             }
         })
+
 
 
         mp = MediaPlayer.create(this, R.raw.wordclicksound)
@@ -142,8 +143,18 @@ class ResultImageActivity : AppCompatActivity() {
         wordSound5.setOnClickListener{speechWord(4)}
 
     }
-    fun speechWord(i : Int){
-        if (words2[i] == "") {
+    fun compressImage(bitmap:Bitmap, quality:Int):Bitmap {
+        // Initialize a new ByteArrayStream
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+
+        val byteArray = stream.toByteArray()
+
+        // Finally, return the compressed bitmap
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+        fun speechWord(i : Int){
+        if (words2[i] == null) {
             Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, words2[i], Toast.LENGTH_SHORT).show()
@@ -155,7 +166,6 @@ class ResultImageActivity : AppCompatActivity() {
 
         val image = FirebaseVisionImage.fromBitmap(bitmap!!)
         val options = FirebaseVisionCloudImageLabelerOptions.Builder()
-            .setConfidenceThreshold(0.7f)
             .build()
         val labeler = FirebaseVision.getInstance().getCloudImageLabeler(options)
         labeler.processImage(image)
@@ -174,8 +184,8 @@ class ResultImageActivity : AppCompatActivity() {
 
 
                         }
-                        wordpilec = builder.toString()
-                        stringtoArray(wordpilec)
+                        changeTextView(words2)
+
 
                     }
                 }
@@ -184,15 +194,16 @@ class ResultImageActivity : AppCompatActivity() {
 
     }
 
-    private fun stringtoArray(wordpilec :String) {
-        var words: Array<String> = wordpilec.split(",").toTypedArray()
-        wordArray = words.copyOf()
-        resultImage_textView1.text = wordArray[0]
-        resultImage_textView2.text = wordArray[1]
-        resultImage_textView3.text = wordArray[2]
-        resultImage_textView4.text = wordArray[3]
-        resultImage_textView5.text = wordArray[4]
+    private fun changeTextView(word: Array<String?>){
+        if(word[0]!=null){
+            resultImage_textView1.text = word[0]
+            resultImage_textView2.text = word[1]
+            resultImage_textView3.text = word[2]
+            resultImage_textView4.text = word[3]
+            resultImage_textView5.text = word[4]
+        }
     }
+
     fun arrayReading(array: Array<String>){
         for (i in array.indices)
             println(array[i])
