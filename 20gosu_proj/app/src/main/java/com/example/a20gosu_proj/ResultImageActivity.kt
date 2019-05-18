@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
@@ -34,14 +35,7 @@ import java.util.*
 class ResultImageActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var fileUri: Uri? = null
-    lateinit var storage: FirebaseStorage
     private var path:String? = null
-    var downloadUriToString:String? = null
-    private var word1:String?=null
-    private var word2:String?=null
-    private var word3:String?=null
-    private var word4:String?=null
-    private var word5:String?=null
     private var check1:Boolean?=true
     private var check2:Boolean?=true
     private var check3:Boolean?=true
@@ -55,18 +49,32 @@ class ResultImageActivity : AppCompatActivity() {
     lateinit var mTTS:TextToSpeech
 
     var words2 = arrayOfNulls<String>(100)
+    private lateinit var database: DatabaseReference
 
+    @IgnoreExtraProperties
+    data class DBWord(
+        var english: String? = "",
+        var spanish: String? = "",
+        var korean: String? = ""
+    ){
+        @Exclude
+        fun toMap(): Map<String, Any?>{
+            return mapOf(
+                "spanish" to spanish,
+                "korean" to korean
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_image)
-        FirebaseApp.initializeApp(this)
+        FirebaseApp.initializeApp(this@ResultImageActivity)
         fileUri = intent?.data
         path = intent.getStringExtra("path")
-        storage = FirebaseStorage.getInstance("gs://gosuproj-2685d.appspot.com/")
+        database = FirebaseDatabase.getInstance().reference
         imageView = findViewById(R.id.resultImage_imageView)
         imageView!!.setImageURI(fileUri)
-        //uploadToCloud()
         bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
         runDetector(bitmap!!)
 
@@ -184,9 +192,8 @@ class ResultImageActivity : AppCompatActivity() {
 
 
                         }
+                        checkDatabase(words2)
                         changeTextView(words2)
-
-
                     }
                 }
             })
@@ -194,6 +201,23 @@ class ResultImageActivity : AppCompatActivity() {
 
     }
 
+    private fun checkDatabase(words: Array<String?>){
+        val wordDataListener = object: ValueEventListener{
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val wordData = dataSnapshot.getValue()
+                println("단어 "+ wordData)
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                Toast.makeText(this@ResultImageActivity, "오류!", Toast.LENGTH_SHORT)
+            }
+        }
+        database.addListenerForSingleValueEvent(wordDataListener)
+        for (word in words){
+            if(word == null)    break;
+
+        }
+    }
     private fun changeTextView(word: Array<String?>){
         if(word[0]!=null){
             resultImage_textView1.text = word[0]
@@ -207,137 +231,6 @@ class ResultImageActivity : AppCompatActivity() {
     fun arrayReading(array: Array<String>){
         for (i in array.indices)
             println(array[i])
-    }
-
-    fun uploadToCloud(){
-        val storageRef = storage.reference
-
-        var file = Uri.fromFile(File(path))
-        val riversRef = storageRef.child("images/${file.lastPathSegment}")
-        var uploadTask = riversRef.putFile(file)
-
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-        }.addOnSuccessListener {
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-        }
-
-        val ref = storageRef.child("images/${file.lastPathSegment}")
-        uploadTask = ref.putFile(file)
-
-        val urlTask = uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let {
-                    throw it
-                }
-            }
-            return@Continuation riversRef.downloadUrl
-        }).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-//                val downloadUri: Uri? = task.result
-//                downloadUriToString = downloadUri.toString()
-                Thread {
-                    sendPost(task.result)
-                }.start()
-                //Log.d("Tag: value is ", downloadUriToString)
-
-            } else {
-                // Handle failures
-                // ...
-            }
-        }
-    }
-
-
-    fun sendPost(downloadUrl: Uri?) {
-        downloadUriToString = downloadUrl.toString()
-        println("다운로드 " + downloadUriToString)
-        val url = "https://vision.googleapis.com/v1/images:annotate?key=" + ApiKey
-        val client = OkHttpClient()
-        val JSON = MediaType.get("application/json; charset=utf-8")
-        var body = RequestBody.create(
-            JSON, "{\n" +
-                    "  \"requests\": [\n" +
-                    "    {\n" +
-                    "      \"image\": {\n" +
-                    "        \"source\": {\n" +
-                    "          \"imageUri\": \"${downloadUriToString}\"\n" +
-                    "        }\n" +
-                    "      },\n" +
-                    "      \"features\": [\n" +
-                    "        {\n" +
-                    "          \"type\": \"OBJECT_LOCALIZATION\"\n" +
-                    "        }\n" +
-                    "      ]\n" +
-                    "    }\n" +
-                    "  ]\n" +
-                    "}"
-        )
-
-        var response: Response? = null
-        Thread {
-            val request = Request.Builder()
-                .url(url)
-                .post(body)
-                .build()
-
-            response = client.newCall(request).execute()
-            this@ResultImageActivity.runOnUiThread(java.lang.Runnable {
-                var gson = Gson() //Gson object 생성
-
-                //json 에서 -> Gson object
-                val parser = JsonParser()
-                val rootObj = parser.parse(response!!.body()!!.string())
-                println(rootObj)
-                var num = if ((Integer.parseInt(
-                        (gson.toJson(
-                            rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.size()
-                        ))
-                    )) > 5
-                ) {
-                    4
-                } else {
-                    Integer.parseInt(
-                        gson.toJson(
-                            rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get(
-                                "localizedObjectAnnotations"
-                            ).asJsonArray.size()
-                        )
-                    ) - 1
-                }
-                var i = 0
-                while (num >= 0) {
-                    var wordparsing = gson.toJson(
-                        rootObj.asJsonObject.get("responses").asJsonArray.get(0).asJsonObject.get("localizedObjectAnnotations").asJsonArray.get(
-                            i
-                        ).asJsonObject.get("name").asString
-                    )
-                    var resultword = wordparsing.replace("\"", "")
-
-
-                    if (i == 0) {
-                        word1=resultword
-                        resultImage_textView1!!.text = word1
-                    } else if (i == 1) {
-                        word2=resultword
-                        resultImage_textView2!!.text = word2
-                    } else if (i == 2) {
-                        word3=resultword
-                        resultImage_textView3!!.text = word3
-                    } else if (i == 3) {
-                        word4=resultword
-                        resultImage_textView4!!.text = word4
-                    } else if (i == 4) {
-                        word5=resultword
-                        resultImage_textView5!!.text = word5
-                    }
-                    i++
-                    num--
-                }
-            })
-        }.start()
-
     }
 
 }
