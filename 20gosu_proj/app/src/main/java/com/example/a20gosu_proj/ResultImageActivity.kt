@@ -49,6 +49,7 @@ class ResultImageActivity : AppCompatActivity() {
     lateinit var mTTS:TextToSpeech
 
     var words2 = arrayOfNulls<String>(100)
+    var resultWord = arrayOfNulls<DBWord>(5)
     private lateinit var database: DatabaseReference
 
     @IgnoreExtraProperties
@@ -63,6 +64,9 @@ class ResultImageActivity : AppCompatActivity() {
                 "spanish" to spanish,
                 "korean" to korean
             )
+        }
+        fun print(){
+            println("DB 출력 "+english+" "+spanish+" "+korean)
         }
     }
 
@@ -92,10 +96,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView1.setOnClickListener {
             mp.start()
             if(check1==false){
-                resultImage_textView1.text=words2[0]
+                resultImage_textView1.text=resultWord[0]?.english?: ""
                 check1=true
             }else{
-                resultImage_textView1.text="뜻"
+                resultImage_textView1.text=resultWord[0]?.korean?: ""
                 check1=false
             }
         }
@@ -103,11 +107,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView2.setOnClickListener {
             mp.start()
             if(check2==false){
-                resultImage_textView2.text=words2[1]
-
+                resultImage_textView2.text=resultWord[1]?.english?: ""
                 check2=true
             }else{
-                resultImage_textView2.text="뜻"
+                resultImage_textView2.text=resultWord[1]?.korean?: ""
                 check2=false
             }
         }
@@ -115,10 +118,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView3.setOnClickListener {
             mp.start()
             if(check3==false){
-                resultImage_textView3.text=words2[2]
+                resultImage_textView3.text=resultWord[2]?.english?: ""
                 check3=true
             }else{
-                resultImage_textView3.text="뜻"
+                resultImage_textView3.text=resultWord[2]?.korean?: ""
                 check3=false
             }
         }
@@ -126,10 +129,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView4.setOnClickListener {
             mp.start()
             if(check4==false){
-                resultImage_textView4.text=words2[3]
+                resultImage_textView4.text=resultWord[3]?.english?: ""
                 check4=true
             }else{
-                resultImage_textView4.text="뜻"
+                resultImage_textView4.text=resultWord[3]?.korean?: ""
                 check4=false
             }
         }
@@ -137,10 +140,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView5.setOnClickListener {
             mp.start()
             if(check5==false){
-                resultImage_textView5.text=words2[4]
+                resultImage_textView5.text=resultWord[4]?.english?: ""
                 check5=true
             }else{
-                resultImage_textView5.text="뜻"
+                resultImage_textView5.text=resultWord[4]?.korean?: ""
                 check5=false
             }
         }
@@ -162,11 +165,11 @@ class ResultImageActivity : AppCompatActivity() {
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
         fun speechWord(i : Int){
-        if (words2[i] == null) {
-            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+        if (resultWord[i]?.english == null) {
+//            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, words2[i], Toast.LENGTH_SHORT).show()
-            mTTS.speak(words2[i], TextToSpeech.QUEUE_FLUSH, null)
+            Toast.makeText(this, resultWord[i]?.english, Toast.LENGTH_SHORT).show()
+            mTTS.speak(resultWord[i]?.english, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -193,7 +196,6 @@ class ResultImageActivity : AppCompatActivity() {
 
                         }
                         checkDatabase(words2)
-                        changeTextView(words2)
                     }
                 }
             })
@@ -204,8 +206,17 @@ class ResultImageActivity : AppCompatActivity() {
     private fun checkDatabase(words: Array<String?>){
         val wordDataListener = object: ValueEventListener{
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wordData = dataSnapshot.getValue()
-                println("단어 "+ wordData)
+                var dbidx: Int = 0
+                for(word in words){
+                    if(word == null) break
+                    var tmpword:DBWord? = dataSnapshot.child(word).getValue(DBWord::class.java)
+                    if(tmpword != null){
+                        tmpword.english = word
+                        resultWord[dbidx++] = tmpword
+                    }
+                    if(dbidx == 5)  break
+                }
+                changeTextView(resultWord)
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -213,19 +224,13 @@ class ResultImageActivity : AppCompatActivity() {
             }
         }
         database.addListenerForSingleValueEvent(wordDataListener)
-        for (word in words){
-            if(word == null)    break;
-
-        }
     }
-    private fun changeTextView(word: Array<String?>){
-        if(word[0]!=null){
-            resultImage_textView1.text = word[0]
-            resultImage_textView2.text = word[1]
-            resultImage_textView3.text = word[2]
-            resultImage_textView4.text = word[3]
-            resultImage_textView5.text = word[4]
-        }
+    private fun changeTextView(dbwords: Array<DBWord?>){
+        resultImage_textView1.text = resultWord[0]?.english?: ""
+        resultImage_textView2.text = resultWord[1]?.english?: ""
+        resultImage_textView3.text = resultWord[2]?.english?: ""
+        resultImage_textView4.text = resultWord[3]?.english?: ""
+        resultImage_textView5.text = resultWord[4]?.english?: ""
     }
 
     fun arrayReading(array: Array<String>){
