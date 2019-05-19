@@ -47,6 +47,7 @@ class ResultImageActivity : AppCompatActivity() {
     var wordArray= emptyArray<String>()
     val builder=StringBuilder()
     lateinit var mTTS:TextToSpeech
+    lateinit var sTTS:TextToSpeech
 
     var words2 = arrayOfNulls<String>(100)
     var resultWord = arrayOfNulls<DBWord>(5)
@@ -84,7 +85,13 @@ class ResultImageActivity : AppCompatActivity() {
 
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
             if(status!= TextToSpeech.ERROR){
-                mTTS.language= Locale.US
+                mTTS.language= Locale.UK
+            }
+        })
+
+        sTTS = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
+            if(status!=TextToSpeech.ERROR){
+                sTTS.setLanguage(Locale("spa", "ESP"))
             }
         })
 
@@ -167,10 +174,16 @@ class ResultImageActivity : AppCompatActivity() {
         fun speechWord(i : Int){
         if (resultWord[i]?.english == null) {
 //            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
-        } else {
+        } else{
             Toast.makeText(this, resultWord[i]?.english, Toast.LENGTH_SHORT).show()
             mTTS.speak(resultWord[i]?.english, TextToSpeech.QUEUE_FLUSH, null)
         }
+        if (resultWord[i]?.spanish == null) {
+             Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+        } else {
+             Toast.makeText(this, resultWord[i]?.spanish, Toast.LENGTH_SHORT).show()
+             sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
+         }
     }
 
      fun runDetector (bitmap : Bitmap?){
