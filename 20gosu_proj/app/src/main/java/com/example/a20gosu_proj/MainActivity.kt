@@ -14,8 +14,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
@@ -24,8 +22,14 @@ import java.util.*
 import android.R.id.edit
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-
-
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.content.ContextCompat.startActivity
+import android.util.Log
+import android.widget.*
+import com.example.a20gosu_proj.R.layout.flag_spinner
+import kotlinx.android.synthetic.main.flag_spinner.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,12 +42,51 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoPath: String
     var currentPhotoPath: String=""
 
+    var imgRes = intArrayOf(R.drawable.korea, R.drawable.spain)
+    var data1 = arrayOf("Korea","Spain")
+    val selectedItems: MutableList<String>? = null
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupCameraPermissions()
+        var flagList=ArrayList<HashMap<String,Any>>()
+        var flagidx=0
+        while(flagidx<data1.size){
+            var map= HashMap<String,Any>()
+            map.put("photo",imgRes[flagidx])
+            map.put("data1",data1[flagidx])
+            flagList.add(map)
+            flagidx++
+        }
+        val keys=arrayOf("photo","data1")
+        val ids= intArrayOf(R.id.flagImage,R.id.flagText)
 
-        val t = Thread(Runnable {
+
+        var spinnerAdapter: SimpleAdapter = SimpleAdapter(this,flagList, R.layout.flag_spinner, keys, ids)
+        var spinner: Spinner = flagspinner as Spinner
+        spinner?.adapter = spinnerAdapter
+        spinner?.setOnItemClickListener(object :AdapterView.OnItemSelectedListener{
+           override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            var text= spinner.selectedItem.toString()
+
+
+
+               println(spinner?.selectedItem.toString())
+           }
+
+           override fun onNothingSelected(parent: AdapterView<*>?) {
+               TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+           }
+       })
+
+
+
+
+
+    val t = Thread(Runnable {
             //  Initialize SharedPreferences
             val getPrefs = PreferenceManager
                 .getDefaultSharedPreferences(baseContext)
@@ -84,6 +127,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == REQUEST_WRITE_EXTERNAL) openCameraApp()
@@ -132,6 +176,7 @@ class MainActivity : AppCompatActivity() {
 //
 //        return image
 //    }
+
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
@@ -192,4 +237,9 @@ class MainActivity : AppCompatActivity() {
             addToGallery()
         }
     }
+}
+
+private fun Spinner.setOnItemClickListener(onItemSelectedListener: AdapterView.OnItemSelectedListener) {
+
+
 }
