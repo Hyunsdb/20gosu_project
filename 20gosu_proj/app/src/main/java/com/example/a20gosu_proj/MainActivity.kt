@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoPath: String
     var currentPhotoPath: String=""
 
-    var imgRes = intArrayOf(R.drawable.korea, R.drawable.spain)
-    var data1 = arrayOf("Korean","Spanish")
+    var imgRes = intArrayOf(R.drawable.ukemo, R.drawable.spainemo)
+    var data1 = arrayOf("English","Spanish")
 
-    val selectedItems: MutableList<String>? = null
+
     var langText:String?=null
 
 

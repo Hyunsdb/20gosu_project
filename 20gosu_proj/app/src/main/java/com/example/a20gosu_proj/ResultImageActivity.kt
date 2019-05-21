@@ -111,10 +111,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView1.setOnClickListener {
             mp.start()
             if(check1==false){
-                resultImage_textView1.text=resultWord[0]?.english?: ""
+                resultImage_textView1.text=langChanege(0,langText)
                 check1=true
             }else{
-                resultImage_textView1.text=langChaneg(0,langText)
+                resultImage_textView1.text=resultWord[0]?.korean?: ""
                 check1=false
             }
         }
@@ -122,10 +122,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView2.setOnClickListener {
             mp.start()
             if(check2==false){
-                resultImage_textView2.text=resultWord[1]?.english?: ""
+                resultImage_textView2.text=langChanege(1,langText)
                 check2=true
             }else{
-                resultImage_textView2.text=langChaneg(1,langText)
+                resultImage_textView2.text=resultWord[1]?.korean?: ""
                 check2=false
             }
         }
@@ -133,10 +133,10 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView3.setOnClickListener {
             mp.start()
             if(check3==false){
-                resultImage_textView3.text=resultWord[2]?.english?: ""
+                resultImage_textView3.text=langChanege(2,langText)
                 check3=true
             }else{
-                resultImage_textView3.text=langChaneg(2,langText)
+                resultImage_textView3.text=resultWord[2]?.korean?: ""
                 check3=false
             }
         }
@@ -144,7 +144,7 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView4.setOnClickListener {
             mp.start()
             if(check4==false){
-                resultImage_textView4.text=resultWord[3]?.english?: ""
+                resultImage_textView4.text=langChanege(3,langText)
                 check4=true
             }else{
                 resultImage_textView4.text=resultWord[3]?.korean?: ""
@@ -155,43 +155,47 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView5.setOnClickListener {
             mp.start()
             if(check5==false){
-                resultImage_textView5.text=resultWord[4]?.english?: ""
+                resultImage_textView5.text=langChanege(4,langText)
                 check5=true
             }else{
                 resultImage_textView5.text=resultWord[4]?.korean?: ""
                 check5=false
             }
         }
-        wordSound1.setOnClickListener{speechWord(0)}
-        wordSound2.setOnClickListener{speechWord(1)}
-        wordSound3.setOnClickListener{speechWord(2)}
-        wordSound4.setOnClickListener{speechWord(3)}
-        wordSound5.setOnClickListener{speechWord(4)}
+        wordSound1.setOnClickListener{speechWord(0,langText)}
+        wordSound2.setOnClickListener{speechWord(1,langText)}
+        wordSound3.setOnClickListener{speechWord(2,langText)}
+        wordSound4.setOnClickListener{speechWord(3,langText)}
+        wordSound5.setOnClickListener{speechWord(4,langText)}
 
     }
 
-        fun langChaneg(i: Int, langText: String): String? {
-            if(langText=="korean")
-                return resultWord[i]?.korean
+        fun langChanege(i: Int, langText: String): String? {
+            if(langText=="english")
+                return resultWord[i]?.english
             else {
                 return resultWord[i]?.spanish
             }
 
         }
 
-        fun speechWord(i : Int){
+        fun speechWord(i : Int, langText: String){
+            if(langText=="english"){
         if (resultWord[i]?.english == null) {
 //            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
         } else{
             Toast.makeText(this, resultWord[i]?.english, Toast.LENGTH_SHORT).show()
             mTTS.speak(resultWord[i]?.english, TextToSpeech.QUEUE_FLUSH, null)
         }
-        if (resultWord[i]?.spanish == null) {
-             Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
-        } else if(langText=="spanish"){
-             Toast.makeText(this, resultWord[i]?.spanish, Toast.LENGTH_SHORT).show()
-             sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
-         }
+            }
+            if(langText=="spanish") {
+                if (resultWord[i]?.spanish == null) {
+                    Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+                } else if (langText == "spanish") {
+                    Toast.makeText(this, resultWord[i]?.spanish, Toast.LENGTH_SHORT).show()
+                    sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
+                }
+            }
     }
 
      fun runDetector (bitmap : Bitmap?){
@@ -247,12 +251,19 @@ class ResultImageActivity : AppCompatActivity() {
         database.addListenerForSingleValueEvent(wordDataListener)
     }
     private fun changeTextView(dbwords: Array<DBWord?>){
-        resultImage_textView1.text = resultWord[0]?.english?: ""
-        resultImage_textView2.text = resultWord[1]?.english?: ""
-        resultImage_textView3.text = resultWord[2]?.english?: ""
-        resultImage_textView4.text = resultWord[3]?.english?: ""
-        resultImage_textView5.text = resultWord[4]?.english?: ""
-
+        if(langText=="english") {
+            resultImage_textView1.text = resultWord[0]?.english ?: ""
+            resultImage_textView2.text = resultWord[1]?.english ?: ""
+            resultImage_textView3.text = resultWord[2]?.english ?: ""
+            resultImage_textView4.text = resultWord[3]?.english ?: ""
+            resultImage_textView5.text = resultWord[4]?.english ?: ""
+        }
+        else
+            resultImage_textView1.text = resultWord[0]?.spanish ?: ""
+            resultImage_textView2.text = resultWord[1]?.spanish ?: ""
+            resultImage_textView3.text = resultWord[2]?.spanish ?: ""
+            resultImage_textView4.text = resultWord[3]?.spanish ?: ""
+            resultImage_textView5.text = resultWord[4]?.spanish ?: ""
     }
 
 
