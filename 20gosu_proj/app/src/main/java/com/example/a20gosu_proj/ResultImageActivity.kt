@@ -1,5 +1,7 @@
 package com.example.a20gosu_proj
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
@@ -27,6 +29,7 @@ import com.google.firebase.storage.UploadTask
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_result_image.*
+import kotlinx.android.synthetic.main.flag_spinner.*
 import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -43,11 +46,10 @@ class ResultImageActivity : AppCompatActivity() {
     private var check5:Boolean?=true
     lateinit var mp:MediaPlayer
     var bitmap:Bitmap? = null
-    var wordpilec:String=""
-    var wordArray= emptyArray<String>()
     val builder=StringBuilder()
     lateinit var mTTS:TextToSpeech
     lateinit var sTTS:TextToSpeech
+    var langText =LangPreference.getLangText().toString().toLowerCase()
 
     var words2 = arrayOfNulls<String>(100)
     var resultWord = arrayOfNulls<DBWord>(5)
@@ -83,6 +85,12 @@ class ResultImageActivity : AppCompatActivity() {
         bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
         runDetector(bitmap!!)
 
+
+
+        println("========")
+
+        println(langText)
+
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
             if(status!= TextToSpeech.ERROR){
                 mTTS.language= Locale.UK
@@ -106,7 +114,7 @@ class ResultImageActivity : AppCompatActivity() {
                 resultImage_textView1.text=resultWord[0]?.english?: ""
                 check1=true
             }else{
-                resultImage_textView1.text=resultWord[0]?.korean?: ""
+                resultImage_textView1.text=langChaneg(0,langText)
                 check1=false
             }
         }
@@ -117,7 +125,7 @@ class ResultImageActivity : AppCompatActivity() {
                 resultImage_textView2.text=resultWord[1]?.english?: ""
                 check2=true
             }else{
-                resultImage_textView2.text=resultWord[1]?.korean?: ""
+                resultImage_textView2.text=langChaneg(1,langText)
                 check2=false
             }
         }
@@ -128,7 +136,7 @@ class ResultImageActivity : AppCompatActivity() {
                 resultImage_textView3.text=resultWord[2]?.english?: ""
                 check3=true
             }else{
-                resultImage_textView3.text=resultWord[2]?.korean?: ""
+                resultImage_textView3.text=langChaneg(2,langText)
                 check3=false
             }
         }
@@ -161,16 +169,16 @@ class ResultImageActivity : AppCompatActivity() {
         wordSound5.setOnClickListener{speechWord(4)}
 
     }
-    fun compressImage(bitmap:Bitmap, quality:Int):Bitmap {
-        // Initialize a new ByteArrayStream
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
 
-        val byteArray = stream.toByteArray()
+        fun langChaneg(i: Int, langText: String): String? {
+            if(langText=="korean")
+                return resultWord[i]?.korean
+            else {
+                return resultWord[i]?.spanish
+            }
 
-        // Finally, return the compressed bitmap
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-    }
+        }
+
         fun speechWord(i : Int){
         if (resultWord[i]?.english == null) {
 //            Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
@@ -180,7 +188,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
         if (resultWord[i]?.spanish == null) {
              Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
-        } else {
+        } else if(langText=="spanish"){
              Toast.makeText(this, resultWord[i]?.spanish, Toast.LENGTH_SHORT).show()
              sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
          }
@@ -244,11 +252,9 @@ class ResultImageActivity : AppCompatActivity() {
         resultImage_textView3.text = resultWord[2]?.english?: ""
         resultImage_textView4.text = resultWord[3]?.english?: ""
         resultImage_textView5.text = resultWord[4]?.english?: ""
+
     }
 
-    fun arrayReading(array: Array<String>){
-        for (i in array.indices)
-            println(array[i])
-    }
+
 
 }

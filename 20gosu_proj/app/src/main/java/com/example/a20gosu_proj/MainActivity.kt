@@ -20,10 +20,12 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import android.R.id.edit
+import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat.startActivity
+import android.text.Selection.setSelection
 import android.util.Log
 import android.widget.*
 import com.example.a20gosu_proj.R.layout.flag_spinner
@@ -43,8 +45,10 @@ class MainActivity : AppCompatActivity() {
     var currentPhotoPath: String=""
 
     var imgRes = intArrayOf(R.drawable.korea, R.drawable.spain)
-    var data1 = arrayOf("Korea","Spain")
+    var data1 = arrayOf("Korean","Spanish")
+
     val selectedItems: MutableList<String>? = null
+    var langText:String?=null
 
 
 
@@ -61,26 +65,30 @@ class MainActivity : AppCompatActivity() {
             flagList.add(map)
             flagidx++
         }
+        var sharedPreferences=getSharedPreferences("Language", Context.MODE_PRIVATE)
         val keys=arrayOf("photo","data1")
         val ids= intArrayOf(R.id.flagImage,R.id.flagText)
-
-
         var spinnerAdapter: SimpleAdapter = SimpleAdapter(this,flagList, R.layout.flag_spinner, keys, ids)
-        var spinner: Spinner = flagspinner as Spinner
+        var spinner: Spinner = flagspinner
         spinner?.adapter = spinnerAdapter
-        spinner?.setOnItemClickListener(object :AdapterView.OnItemSelectedListener{
-           override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            var text= spinner.selectedItem.toString()
+        spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                var language= parent?.getItemAtPosition(position).toString()
+                langText=langParse(language)
+               LangPreference.setLangText(langText!!)
 
 
 
-               println(spinner?.selectedItem.toString())
-           }
+            }
 
-           override fun onNothingSelected(parent: AdapterView<*>?) {
-               TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-           }
-       })
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+
+
 
 
 
@@ -117,17 +125,28 @@ class MainActivity : AppCompatActivity() {
         t.start()
 
         mainButtonGallery = findViewById<View>(R.id.main_button_gallery) as ImageButton
-        mainButtonGallery!!.setOnClickListener { selectImageInAlbum() }
+        mainButtonGallery!!.setOnClickListener {
+            selectImageInAlbum()
+        }
 
         main_button_camera.setOnClickListener {
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_EXTERNAL)
             }else {
                 openCameraApp()
+
             }
         }
     }
 
+
+
+    fun langParse(data:String): String {
+        val onestep=data.substringBefore(",")
+        val twostep =onestep.substringAfter("=")
+        return twostep
+
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == REQUEST_WRITE_EXTERNAL) openCameraApp()
@@ -214,6 +233,7 @@ class MainActivity : AppCompatActivity() {
     fun selectImageInAlbum(){
         val intent = Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
+
         if(intent.resolveActivity(packageManager)!=null){
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
         }
@@ -239,7 +259,5 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-private fun Spinner.setOnItemClickListener(onItemSelectedListener: AdapterView.OnItemSelectedListener) {
 
 
-}

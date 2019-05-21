@@ -16,6 +16,9 @@ import com.github.paolorotolo.appintro.AppIntroFragment
 
 class IntroActivity : AppIntro() {
 
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addSlide(AppIntroFragment.newInstance("WaKnowPic!!", "사진을 찍어 외국어를 공부합니다!", R.drawable.intro, Color.parseColor("#F291A3")))
@@ -28,6 +31,7 @@ class IntroActivity : AppIntro() {
         setZoomAnimation();
         setFlowAnimation();
         setSlideOverAnimation();
+
     }
 
     override fun onSkipPressed(currentFragment: Fragment?) {
@@ -53,5 +57,7 @@ class IntroActivity : AppIntro() {
         // Do something when the slide changes.
 
     }
+
+
 
 }

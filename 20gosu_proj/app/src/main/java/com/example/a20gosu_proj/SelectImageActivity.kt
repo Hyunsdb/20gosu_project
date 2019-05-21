@@ -24,6 +24,7 @@ class SelectImageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_image)
 
+
         buttonOk = findViewById(R.id.selectImage_button_ok) as Button
         buttonCancel = findViewById(R.id.selectImage_button_cancel) as Button
         imageView = findViewById(R.id.selectImage_imageView) as ImageView
