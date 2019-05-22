@@ -250,22 +250,20 @@ class ResultImageActivity : AppCompatActivity() {
         }
         database.addListenerForSingleValueEvent(wordDataListener)
     }
-    private fun changeTextView(dbwords: Array<DBWord?>){
-        if(langText=="english") {
+    private fun changeTextView(dbwords: Array<DBWord?>) {
+        if (langText == "spanish") {
+            resultImage_textView1.text = resultWord[0]?.spanish ?: ""
+            resultImage_textView2.text = resultWord[1]?.spanish ?: ""
+            resultImage_textView3.text = resultWord[2]?.spanish ?: ""
+            resultImage_textView4.text = resultWord[3]?.spanish ?: ""
+            resultImage_textView5.text = resultWord[4]?.spanish ?: ""
+        }
+        if (langText == "english") {
             resultImage_textView1.text = resultWord[0]?.english ?: ""
             resultImage_textView2.text = resultWord[1]?.english ?: ""
             resultImage_textView3.text = resultWord[2]?.english ?: ""
             resultImage_textView4.text = resultWord[3]?.english ?: ""
             resultImage_textView5.text = resultWord[4]?.english ?: ""
         }
-        else
-            resultImage_textView1.text = resultWord[0]?.spanish ?: ""
-            resultImage_textView2.text = resultWord[1]?.spanish ?: ""
-            resultImage_textView3.text = resultWord[2]?.spanish ?: ""
-            resultImage_textView4.text = resultWord[3]?.spanish ?: ""
-            resultImage_textView5.text = resultWord[4]?.spanish ?: ""
     }
-
-
-
 }
