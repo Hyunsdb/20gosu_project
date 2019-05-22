@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-              android:background="@drawable/bkg1"
+              android:background="@drawable/bkg"
     tools:context="com.example.a20gosu_proj.SelectImageActivity">
 
     <ImageView
@@ -12,33 +12,43 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:src="@mipmap/ic_launcher"
         android:id="@+id/selectImage_imageView"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="7"
-        android:orientation="horizontal">
+        android:layout_weight="5"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+    android:layout_marginTop="10dp">
 
         <Button
             android:id="@+id/selectImage_button_cancel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/shape"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
+            android:backgroundTint="@color/colorAccent"
             android:text="사진 다시 선택"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/selectImage_button_ok"
+            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/shape"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="확인" />
+            android:text="확인"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"/>
     </LinearLayout>
 
 </LinearLayout>
