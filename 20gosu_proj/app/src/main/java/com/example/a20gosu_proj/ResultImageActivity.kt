@@ -1,11 +1,14 @@
 package com.example.a20gosu_proj
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.Uri
+import android.net.http.SslCertificate
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
@@ -14,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import android.provider.MediaStore
 import android.speech.tts.TextToSpeech
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
@@ -30,6 +34,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_result_image.*
 import kotlinx.android.synthetic.main.flag_spinner.*
+import kotlinx.android.synthetic.main.popup.*
+import kotlinx.android.synthetic.main.popup.view.*
 import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -50,6 +56,7 @@ class ResultImageActivity : AppCompatActivity() {
     lateinit var mTTS:TextToSpeech
     lateinit var sTTS:TextToSpeech
     var langText =LangPreference.getLangText().toString().toLowerCase()
+
 
     var words2 = arrayOfNulls<String>(100)
     var resultWord = arrayOfNulls<DBWord>(5)
@@ -88,7 +95,6 @@ class ResultImageActivity : AppCompatActivity() {
 
 
         println("========")
-
         println(langText)
 
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
@@ -168,6 +174,7 @@ class ResultImageActivity : AppCompatActivity() {
         wordSound4.setOnClickListener{speechWord(3,langText)}
         wordSound5.setOnClickListener{speechWord(4,langText)}
 
+
     }
 
         fun langChanege(i: Int, langText: String): String? {
@@ -201,7 +208,7 @@ class ResultImageActivity : AppCompatActivity() {
      fun runDetector (bitmap : Bitmap?){
 
         val image = FirebaseVisionImage.fromBitmap(bitmap!!)
-        val options = FirebaseVisionCloudImageLabelerOptions.Builder()
+        val options = FirebaseVisionCloudImageLabelerOptions.Builder().setConfidenceThreshold(0.7f)
             .build()
         val labeler = FirebaseVision.getInstance().getCloudImageLabeler(options)
         labeler.processImage(image)
@@ -221,19 +228,46 @@ class ResultImageActivity : AppCompatActivity() {
 
                         }
                         checkDatabase(words2)
+
+
+
+
                     }
                 }
             })
             .addOnFailureListener{e-> Log.d("Edmmer",e.message)}
 
     }
+    fun popupFoo(pop : Boolean){
+        var popupBuilder = AlertDialog.Builder(this)
+        var popupDialogView = layoutInflater.inflate(R.layout.popup, null)
+        val intent = Intent(this, MainActivity::class.java)
+
+
+        popupBuilder.setTitle("알맞는 단어가 없어요")
+        popupBuilder.setView(popupDialogView)
+
+        if(pop) {
+            popupBuilder.show()
+        }
+        popupDialogView.popupBtn.setOnClickListener{
+            mp.start()
+            startActivity(intent)
+        }
+
+
+    }
+
 
     private fun checkDatabase(words: Array<String?>){
         val wordDataListener = object: ValueEventListener{
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var dbidx: Int = 0
                 for(word in words){
-                    if(word == null) break
+                    if(word == null) {
+
+                        break
+                    }
                     var tmpword:DBWord? = dataSnapshot.child(word).getValue(DBWord::class.java)
                     if(tmpword != null){
                         tmpword.english = word
@@ -242,6 +276,9 @@ class ResultImageActivity : AppCompatActivity() {
                     if(dbidx == 5)  break
                 }
                 changeTextView(resultWord)
+                println(resultWord[0]?.english)
+                if (resultWord[0]?.english==null)
+                    popupFoo(true)
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -249,6 +286,7 @@ class ResultImageActivity : AppCompatActivity() {
             }
         }
         database.addListenerForSingleValueEvent(wordDataListener)
+
     }
     private fun changeTextView(dbwords: Array<DBWord?>) {
         if (langText == "spanish") {
