@@ -241,8 +241,6 @@ class ResultImageActivity : AppCompatActivity() {
     fun popupFoo(pop : Boolean){
         var popupBuilder = AlertDialog.Builder(this)
         var popupDialogView = layoutInflater.inflate(R.layout.popup, null)
-        val intent = Intent(this, MainActivity::class.java)
-
 
         popupBuilder.setTitle("알맞는 단어가 없어요")
         popupBuilder.setView(popupDialogView)
@@ -252,7 +250,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
         popupDialogView.popupBtn.setOnClickListener{
             mp.start()
-            startActivity(intent)
+            this.finish()
         }
 
 
