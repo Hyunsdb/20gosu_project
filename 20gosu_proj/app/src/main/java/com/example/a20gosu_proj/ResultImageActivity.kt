@@ -1,5 +1,6 @@
 package com.example.a20gosu_proj
 
+import android.app.ActionBar
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -19,6 +20,8 @@ import android.provider.MediaStore
 import android.speech.tts.TextToSpeech
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams
 import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnSuccessListener
@@ -242,16 +245,17 @@ class ResultImageActivity : AppCompatActivity() {
         var popupBuilder = AlertDialog.Builder(this)
         var popupDialogView = layoutInflater.inflate(R.layout.popup, null)
 
-        popupBuilder.setTitle("알맞는 단어가 없어요")
         popupBuilder.setView(popupDialogView)
 
         if(pop) {
             popupBuilder.show()
+
         }
         popupDialogView.popupBtn.setOnClickListener{
             mp.start()
             this.finish()
         }
+
 
 
     }

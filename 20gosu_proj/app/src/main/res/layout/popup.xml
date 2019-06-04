@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+>
 
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="107dp">
-            <ImageView
-                    android:layout_width="179dp"
-                    android:layout_height="match_parent" app:srcCompat="@drawable/sorry2" android:id="@+id/popupImage"
-                    android:layout_weight="1"/>
-        </LinearLayout>
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="19dp">
-            <TextView
-                    android:text="다른 사진을 시도해주세요"
-                    android:layout_width="213dp"
-                    android:layout_height="wrap_content" android:id="@+id/popupText" android:layout_weight="1"/>
-        </LinearLayout>
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
-            <Button
-                    android:text="처음으로 가기"
-                    android:layout_width="201dp"
-                    android:layout_height="37dp" android:id="@+id/popupBtn" android:layout_weight="1"/>
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="250dp" app:srcCompat="@drawable/sorry2" android:id="@+id/popupImage"
+            android:scaleType="centerInside"
+            android:layout_centerInParent="true" android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" android:layout_alignParentRight="true" android:layout_marginRight="0dp"
+            android:layout_marginEnd="0dp"/>
+    <TextView
+            android:text="인식된 단어가 없어요!"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/popupText1"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/popupImage"
+            android:layout_centerHorizontal="true"
+
+    />
+    <TextView
+            android:text="다른 사진을 시도해주세요."
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/popupText2"
+            android:layout_below="@+id/popupText1"
+            android:layout_centerHorizontal="true"
+    />
+    <Button
+            android:text="처음으로 돌아가기"
+            android:layout_width="300dp"
+            android:layout_height="37dp" android:id="@+id/popupBtn"
+            android:background="@drawable/shape"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_below="@+id/popupText2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+
+    />
+</RelativeLayout>
