@@ -248,12 +248,15 @@ class ResultImageActivity : AppCompatActivity() {
         popupBuilder.setView(popupDialogView)
 
         if(pop) {
-            popupBuilder.show()
+            val pt = popupBuilder.show()
 
-        }
-        popupDialogView.popupBtn.setOnClickListener{
-            mp.start()
-            this.finish()
+
+            popupDialogView.popupBtn.setOnClickListener {
+                mp.start()
+                pt.dismiss()
+
+                this.finish()
+            }
         }
 
 
