@@ -27,7 +27,6 @@
                     android:background="@drawable/shape"
                     android:layout_width="180dp"
                     android:layout_height="180dp"
-                    android:layout_marginRight="50dp"
                     android:id="@+id/main_button_gallery"
                     android:layout_centerVertical="true"/>
             <ImageButton
@@ -37,6 +36,13 @@
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:layout_marginLeft="50dp"/>
+<!--            <ImageButton-->
+<!--                android:id="@+id/main_button_result_gallery"-->
+<!--                android:src="@drawable/main_camera"-->
+<!--                android:background="@drawable/shape"-->
+<!--                android:layout_width="180dp"-->
+<!--                android:layout_height="180dp"-->
+<!--                android:layout_marginLeft="50dp"/>-->
         </LinearLayout>
 
     </RelativeLayout>

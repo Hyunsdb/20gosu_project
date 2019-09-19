@@ -1,51 +1,42 @@
 package com.example.a20gosu_proj
 
-import android.app.ActionBar
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.SharedPreferences
+import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.media.MediaPlayer
 import android.net.Uri
-import android.net.http.SslCertificate
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import android.widget.ImageView
-import com.example.a20gosu_proj.BuildConfig.ApiKey
-import com.google.firebase.storage.FirebaseStorage
-import java.io.File
 import android.provider.MediaStore
 import android.speech.tts.TextToSpeech
+import android.support.annotation.RequiresApi
 import android.support.v7.app.AlertDialog
 import android.util.Log
-import android.view.WindowManager
-import android.view.WindowManager.LayoutParams
+import android.view.*
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel
-import com.google.firebase.storage.UploadTask
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_result_image.*
-import kotlinx.android.synthetic.main.flag_spinner.*
-import kotlinx.android.synthetic.main.popup.*
 import kotlinx.android.synthetic.main.popup.view.*
-import okhttp3.*
-import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.lang.Exception
 import java.util.*
 
 
 class ResultImageActivity : AppCompatActivity() {
-    private var imageView: ImageView? = null
+    private var imageButton: ImageView? = null
     private var fileUri: Uri? = null
     private var path:String? = null
     private var check1:Boolean?=true
@@ -83,6 +74,7 @@ class ResultImageActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_image)
@@ -90,8 +82,8 @@ class ResultImageActivity : AppCompatActivity() {
         fileUri = intent?.data
         path = intent.getStringExtra("path")
         database = FirebaseDatabase.getInstance().reference
-        imageView = findViewById(R.id.resultImage_imageView)
-        imageView!!.setImageURI(fileUri)
+        imageButton = findViewById(R.id.resultImage_imageButton)
+        imageButton!!.setImageURI(fileUri)
         bitmap= MediaStore.Images.Media.getBitmap(contentResolver, fileUri)
         runDetector(bitmap!!)
 
@@ -99,6 +91,7 @@ class ResultImageActivity : AppCompatActivity() {
 
         println("========")
         println(langText)
+
 
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
             if(status!= TextToSpeech.ERROR){
@@ -170,6 +163,7 @@ class ResultImageActivity : AppCompatActivity() {
                 resultImage_textView5.text=resultWord[4]?.korean?: ""
                 check5=false
             }
+
         }
         wordSound1.setOnClickListener{speechWord(0,langText)}
         wordSound2.setOnClickListener{speechWord(1,langText)}
@@ -177,7 +171,28 @@ class ResultImageActivity : AppCompatActivity() {
         wordSound4.setOnClickListener{speechWord(3,langText)}
         wordSound5.setOnClickListener{speechWord(4,langText)}
 
+        imageButton!!.setOnClickListener {
+            val now: String = System.currentTimeMillis().toString()
+//            android.text.format.DateFormat.format("MM-dd_hh:mm", now)
+            try{
+                val storageDir:String = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/WaKnowPic/result"
+                val rootView:View = window.decorView.findViewById(R.id.resultImage_layout)
+                getBitmapFromView(rootView, this) { bitmap ->
+                    var dir:File = File(storageDir)
+                    if(!dir.exists())   dir.mkdir()
+                    var myfile:File = File(dir, now+".jpg")
+                    var fout: OutputStream = FileOutputStream(myfile)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fout)
+                    Log.d("Y2K2", myfile.absolutePath)
+                    fout.flush()
+                    fout.close()
+                    Toast.makeText(this, "Save "+myfile.absolutePath, Toast.LENGTH_SHORT).show()
 
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
     }
 
         fun langChanege(i: Int, langText: String): String? {
@@ -206,6 +221,26 @@ class ResultImageActivity : AppCompatActivity() {
                     sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
                 }
             }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getBitmapFromView(view: View, activity: Activity, callback: (Bitmap) -> Unit) {
+        activity.window?.let { window ->
+            val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            val locationOfViewInWindow = IntArray(2)
+            view.getLocationInWindow(locationOfViewInWindow)
+            try {
+                PixelCopy.request(window, Rect(locationOfViewInWindow[0], locationOfViewInWindow[1], locationOfViewInWindow[0] + view.width, locationOfViewInWindow[1] + view.height), bitmap, { copyResult ->
+                    if (copyResult == PixelCopy.SUCCESS) {
+                        callback(bitmap)
+                    }
+                    // possible to handle other result codes ...
+                }, Handler())
+            } catch (e: IllegalArgumentException) {
+                // PixelCopy may throw IllegalArgumentException, make sure to handle it
+                e.printStackTrace()
+            }
+        }
     }
 
      fun runDetector (bitmap : Bitmap?){

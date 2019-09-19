@@ -19,17 +19,10 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import android.R.id.edit
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import android.support.v4.content.ContextCompat.startActivity
-import android.text.Selection.setSelection
 import android.util.Log
 import android.widget.*
-import com.example.a20gosu_proj.R.layout.flag_spinner
-import kotlinx.android.synthetic.main.flag_spinner.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -55,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupCameraPermissions()
+        setupPermissions()
         var flagList=ArrayList<HashMap<String,Any>>()
         var flagidx=0
         while(flagidx<data1.size){
@@ -137,6 +130,9 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+//        main_button_result_gallery.setOnClickListener {
+//            reultImageInAlbum()
+//        }
     }
 
 
@@ -151,14 +147,14 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == REQUEST_WRITE_EXTERNAL) openCameraApp()
     }
-    private fun setupCameraPermissions() {
+    private fun setupPermissions() {
         val cameraPermission = ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
-        if(cameraPermission!=PackageManager.PERMISSION_GRANTED) {makeRequest()}
+        val readStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val writeStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-    }
-
-    private fun makeRequest(){
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_TAKE_PHOTO)
+        if(cameraPermission!=PackageManager.PERMISSION_GRANTED) {ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_TAKE_PHOTO)}
+        if(readStoragePermission!=PackageManager.PERMISSION_GRANTED) {ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_SELECT_IMAGE_IN_ALBUM)}
+        if(writeStoragePermission!=PackageManager.PERMISSION_GRANTED){ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_EXTERNAL)}
     }
 
     private var doubleBackToExitPressedOnce =false
@@ -236,6 +232,20 @@ class MainActivity : AppCompatActivity() {
 
         if(intent.resolveActivity(packageManager)!=null){
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+        }
+    }
+    fun reultImageInAlbum(){
+        val storageDir:File = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/WaKnowPic/result")
+        val targetUri:Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val storageUri: Uri = FileProvider.getUriForFile(applicationContext, "com.example.android.fileprovider", storageDir)
+        Log.d("Y2K2", targetUri.toString())
+        Log.d("Y2K22", storageUri.toString())
+        Log.d("Y2K222", storageUri.path)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(storageUri, "image/*")
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(intent.resolveActivity(packageManager)!=null){
+            startActivity(intent)
         }
     }
 

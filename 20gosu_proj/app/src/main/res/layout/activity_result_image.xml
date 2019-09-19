@@ -6,14 +6,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.example.a20gosu_proj.ResultImageActivity"
-        android:background="@drawable/bkg">
+        android:background="@drawable/bkg"
+        android:id="@+id/resultImage_layout">
 
 
     <ImageView
             android:layout_width="330dp"
             android:layout_height="500dp"
             android:src="@mipmap/ic_launcher"
-            android:id="@+id/resultImage_imageView"
+            android:id="@+id/resultImage_imageButton"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
     />
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             app:scale_base_width="100"
             app:scale_base_height="110"
-            android:layout_toRightOf="@+id/resultImage_imageView"
+            android:layout_toRightOf="@+id/resultImage_imageButton"
             android:layout_centerInParent="true"
             android:layout_marginLeft="10dp"
 
