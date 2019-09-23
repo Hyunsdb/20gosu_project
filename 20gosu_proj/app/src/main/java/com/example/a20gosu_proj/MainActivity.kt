@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     var imgRes = intArrayOf(R.drawable.ukemo, R.drawable.spainemo, R.drawable.german, R.drawable.italy, R.drawable.french)
     var data1 = arrayOf("English","Spanish","German","Italian","French")
 
-
     var langText:String?=null
 
 

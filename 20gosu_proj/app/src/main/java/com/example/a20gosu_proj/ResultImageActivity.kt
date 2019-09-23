@@ -225,9 +225,9 @@ class ResultImageActivity : AppCompatActivity() {
                 return resultWord[i]?.german
             else if(langText=="italian")
                 return resultWord[i]?.italian
-            else {
+            else
                 return resultWord[i]?.french
-            }
+
 
         }
 
@@ -380,7 +380,7 @@ class ResultImageActivity : AppCompatActivity() {
         database.addListenerForSingleValueEvent(wordDataListener)
 
     }
-    private fun changeTextView(dbwords: Array<DBWord?>) {
+    private fun changeTextView(dbwords: Array<ResultImageActivity.DBWord?>) {
         if (langText == "spanish") {
             resultImage_textView1.text = resultWord[0]?.spanish ?: ""
             resultImage_textView2.text = resultWord[1]?.spanish ?: ""
