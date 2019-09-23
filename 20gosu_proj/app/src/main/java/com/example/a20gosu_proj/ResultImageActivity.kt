@@ -49,6 +49,9 @@ class ResultImageActivity : AppCompatActivity() {
     val builder=StringBuilder()
     lateinit var mTTS:TextToSpeech
     lateinit var sTTS:TextToSpeech
+    lateinit var gTTS:TextToSpeech
+    lateinit var iTTS:TextToSpeech
+    lateinit var fTTS:TextToSpeech
     var langText =LangPreference.getLangText().toString().toLowerCase()
 
 
@@ -60,7 +63,10 @@ class ResultImageActivity : AppCompatActivity() {
     data class DBWord(
         var english: String? = "",
         var spanish: String? = "",
-        var korean: String? = ""
+        var korean: String? = "",
+        var french: String? = "",
+        var italian: String? = "",
+        var german: String? = ""
     ){
         @Exclude
         fun toMap(): Map<String, Any?>{
@@ -92,6 +98,21 @@ class ResultImageActivity : AppCompatActivity() {
         println("========")
         println(langText)
 
+        iTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
+            if(status!= TextToSpeech.ERROR){
+                iTTS.language= Locale.ITALIAN
+            }
+        })
+        gTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
+            if(status!= TextToSpeech.ERROR){
+                gTTS.language= Locale.GERMAN
+            }
+        })
+        fTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
+            if(status!= TextToSpeech.ERROR){
+                fTTS.language= Locale.FRENCH
+            }
+        })
 
         mTTS= TextToSpeech(applicationContext,TextToSpeech.OnInitListener { status ->
             if(status!= TextToSpeech.ERROR){
@@ -198,8 +219,14 @@ class ResultImageActivity : AppCompatActivity() {
         fun langChanege(i: Int, langText: String): String? {
             if(langText=="english")
                 return resultWord[i]?.english
-            else {
+            else if(langText=="spanish")
                 return resultWord[i]?.spanish
+            else if(langText=="german")
+                return resultWord[i]?.german
+            else if(langText=="italian")
+                return resultWord[i]?.italian
+            else {
+                return resultWord[i]?.french
             }
 
         }
@@ -219,6 +246,30 @@ class ResultImageActivity : AppCompatActivity() {
                 } else if (langText == "spanish") {
                     Toast.makeText(this, resultWord[i]?.spanish, Toast.LENGTH_SHORT).show()
                     sTTS.speak(resultWord[i]?.spanish, TextToSpeech.QUEUE_FLUSH, null)
+                }
+            }
+            if(langText=="german") {
+                if (resultWord[i]?.german == null) {
+                    Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+                } else if (langText == "german") {
+                    Toast.makeText(this, resultWord[i]?.german, Toast.LENGTH_SHORT).show()
+                    gTTS.speak(resultWord[i]?.german, TextToSpeech.QUEUE_FLUSH, null)
+                }
+            }
+            if(langText=="italian") {
+                if (resultWord[i]?.italian == null) {
+                    Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+                } else if (langText == "italian") {
+                    Toast.makeText(this, resultWord[i]?.italian, Toast.LENGTH_SHORT).show()
+                    iTTS.speak(resultWord[i]?.italian, TextToSpeech.QUEUE_FLUSH, null)
+                }
+            }
+            if(langText=="french") {
+                if (resultWord[i]?.french == null) {
+                    Toast.makeText(this, "단어를 읽지 못했습니다", Toast.LENGTH_SHORT).show()
+                } else if (langText == "french") {
+                    Toast.makeText(this, resultWord[i]?.french, Toast.LENGTH_SHORT).show()
+                    fTTS.speak(resultWord[i]?.french, TextToSpeech.QUEUE_FLUSH, null)
                 }
             }
     }
@@ -308,7 +359,8 @@ class ResultImageActivity : AppCompatActivity() {
 
                         break
                     }
-                    var tmpword:DBWord? = dataSnapshot.child(word).getValue(DBWord::class.java)
+                    var tmpword: ResultImageActivity.DBWord? = dataSnapshot.child(word).getValue(
+                        ResultImageActivity.DBWord::class.java)
                     if(tmpword != null){
                         tmpword.english = word
                         resultWord[dbidx++] = tmpword
@@ -342,6 +394,27 @@ class ResultImageActivity : AppCompatActivity() {
             resultImage_textView3.text = resultWord[2]?.english ?: ""
             resultImage_textView4.text = resultWord[3]?.english ?: ""
             resultImage_textView5.text = resultWord[4]?.english ?: ""
+        }
+        if (langText == "german") {
+            resultImage_textView1.text = resultWord[0]?.german ?: ""
+            resultImage_textView2.text = resultWord[1]?.german ?: ""
+            resultImage_textView3.text = resultWord[2]?.german ?: ""
+            resultImage_textView4.text = resultWord[3]?.german ?: ""
+            resultImage_textView5.text = resultWord[4]?.german ?: ""
+        }
+        if (langText == "italian") {
+            resultImage_textView1.text = resultWord[0]?.italian ?: ""
+            resultImage_textView2.text = resultWord[1]?.italian ?: ""
+            resultImage_textView3.text = resultWord[2]?.italian ?: ""
+            resultImage_textView4.text = resultWord[3]?.italian ?: ""
+            resultImage_textView5.text = resultWord[4]?.italian ?: ""
+        }
+        if (langText == "french") {
+            resultImage_textView1.text = resultWord[0]?.french ?: ""
+            resultImage_textView2.text = resultWord[1]?.french ?: ""
+            resultImage_textView3.text = resultWord[2]?.french ?: ""
+            resultImage_textView4.text = resultWord[3]?.french ?: ""
+            resultImage_textView5.text = resultWord[4]?.french ?: ""
         }
     }
 }

@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoPath: String
     var currentPhotoPath: String=""
 
-    var imgRes = intArrayOf(R.drawable.ukemo, R.drawable.spainemo)
-    var data1 = arrayOf("English","Spanish")
+    var imgRes = intArrayOf(R.drawable.ukemo, R.drawable.spainemo, R.drawable.german, R.drawable.italy, R.drawable.french)
+    var data1 = arrayOf("English","Spanish","German","Italian","French")
 
 
     var langText:String?=null
